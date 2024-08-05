@@ -56,25 +56,16 @@ final class GravityFormsDataSource extends BaseDataSource {
 	private array $fields;
 
 	/**
-	 * Whether Gravity Forms is available.
-	 *
-	 * @since $ver$
-	 * @return bool
-	 */
-	private function has_gravity_forms(): bool {
-		return class_exists( 'GFAPI' );
-	}
-
-	/**
 	 * Creates the data source.
 	 *
 	 * @since $ver$
 	 *
 	 * @param int $form_id The form ID.
+	 * @throws DataSourceNotFoundException When the data source could not be instantiated.
 	 */
 	public function __construct( int $form_id ) {
-		if ( ! $this->has_gravity_forms() ) {
-			return;
+		if ( ! class_exists( 'GFAPI' ) ) {
+			throw new DataSourceNotFoundException( 'Data source can not be used, as Gravity Forms is not available.' );
 		}
 
 		$form = GFAPI::get_form( $form_id );
@@ -100,10 +91,6 @@ final class GravityFormsDataSource extends BaseDataSource {
 	 * @since $ver$
 	 */
 	public function get_data_ids( int $limit = 100, int $offset = 0 ): array {
-		if ( ! $this->has_gravity_forms() ) {
-			return [];
-		}
-
 		$entries = GFAPI::get_entries(
 			$this->form['id'],
 			$this->get_search_criteria(),
@@ -131,10 +118,6 @@ final class GravityFormsDataSource extends BaseDataSource {
 	 * @since $ver$
 	 */
 	public function get_data_by_id( string $id ): array {
-		if ( ! $this->has_gravity_forms() ) {
-			return [];
-		}
-
 		$entry = $this->entries[ $id ] ?? GFAPI::get_entry( (int) $id );
 
 		if ( ! is_array( $entry ) ) {
@@ -159,10 +142,6 @@ final class GravityFormsDataSource extends BaseDataSource {
 	 * @since $ver$
 	 */
 	public function count(): int {
-		if ( ! $this->has_gravity_forms() ) {
-			return 0;
-		}
-
 		return GFAPI::count_entries( $this->form['id'], $this->get_search_criteria() );
 	}
 
@@ -302,10 +281,6 @@ final class GravityFormsDataSource extends BaseDataSource {
 	 * @since $ver$
 	 */
 	public function get_fields(): array {
-		if ( ! $this->has_gravity_forms() ) {
-			return [];
-		}
-
 		if ( isset( $this->fields ) ) {
 			return $this->fields;
 		}
