@@ -97,7 +97,7 @@ final class ViewController {
 	 *
 	 * @return array|WP_Error The response.
 	 */
-	public function get_data_item( WP_REST_Request $request ): array {
+	public function get_data_item( WP_REST_Request $request ) {
 		$view_id = (string) ( $request->get_param( 'view_id' ) ?? '' );
 		$data_id = (string) ( $request->get_param( 'data_id' ) ?? '' );
 

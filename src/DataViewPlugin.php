@@ -53,7 +53,7 @@ final class DataViewPlugin {
 		 *
 		 * @param int $per_page The amount of results per page (default is 25).
 		 */
-		$per_page ??= (int) apply_filters( 'datakit/dataview/pagination/per-page-default', 25 );
+		$per_page = (int) apply_filters( 'datakit/dataview/pagination/per-page-default', 25 );
 		Pagination::default_results_per_page( $per_page );
 
 		add_action( 'datakit/dataview/register', [ $this, 'register_data_view' ] );
