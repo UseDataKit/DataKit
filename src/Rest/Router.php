@@ -97,8 +97,8 @@ final class Router {
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_view' ],
-					'permission_callback' => [ $this, 'get_view_permissions_check' ],
+					'callback'            => [ $this->view_controller, 'get_view' ],
+					'permission_callback' => [ $this->view_controller, 'can_view' ],
 					'args'                => [
 						'search'  => [
 							'default'           => '',
@@ -131,7 +131,7 @@ final class Router {
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this->view_controller, 'get_item' ],
+					'callback'            => [ $this->view_controller, 'get_data_item' ],
 					'permission_callback' => [ $this->view_controller, 'can_view' ],
 				],
 			],
@@ -148,18 +148,6 @@ final class Router {
 				],
 			],
 		);
-	}
-
-	/**
-	 * Returns whether the current user can retrieve the view content.
-	 *
-	 * @since $ver$
-	 *
-	 * @return bool
-	 */
-	public function get_view_permissions_check(): bool {
-		// Todo: add permissions checks.
-		return true;
 	}
 
 	/**
@@ -187,40 +175,6 @@ final class Router {
 			return true;
 		} catch ( \Exception $e ) {
 			return false;
-		}
-	}
-
-	/**
-	 * Returns the DataView data.
-	 *
-	 * @since $ver$
-	 *
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return array|WP_Error The data or error object.
-	 */
-	public function get_view( WP_REST_Request $request ) {
-		try {
-			$data_view = $this->data_view_repository->get( $request->get_param( 'id' ) );
-			$params    = $request->get_params();
-
-			// Update view with provided params.
-			$data_source = $data_view->data_source()
-				->filter_by( Filters::from_array( $params['filters'] ?? [] ) )
-				->search_by( $params['search'] ?? '' );
-
-			$pagination = ( $params['page'] ?? null ) ? Pagination::from_array( $params ) : Pagination::default();
-
-			if ( $params['sort'] ?? [] ) {
-				$data_source = $data_source->sort_by( Sort::from_array( $params['sort'] ) );
-			}
-
-			return [
-				'data'           => $data_view->get_data( $data_source, $pagination ),
-				'paginationInfo' => $pagination->info( $data_source ),
-			];
-		} catch ( \Exception $e ) {
-			return new WP_Error( $e->getCode(), $e->getMessage() );
 		}
 	}
 
