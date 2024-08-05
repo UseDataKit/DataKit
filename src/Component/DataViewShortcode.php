@@ -3,6 +3,7 @@
 namespace DataKit\Plugin\Component;
 
 use DataKit\DataViews\DataView\DataViewRepository;
+use DataKit\DataViews\DataViewException;
 use DataKit\Plugin\Rest\Router;
 
 /**
@@ -84,8 +85,12 @@ final class DataViewShortcode {
 			wp_enqueue_style( 'datakit/dataview' );
 
 			$dataview = $this->data_view_repository->get( $id );
-			$js       = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
-			$js       = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
+			try {
+				$js = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
+				$js = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
+			} catch ( DataViewException $e ) {
+				return '';
+			}
 
 			if (
 				wp_is_block_theme()
