@@ -46,9 +46,16 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 	 *
 	 * @since $ver$
 	 *
+	 * @throws DataSourceNotFoundException If the WS Form plugin is not found.
+	 *
 	 * @param int $form_id The form ID.
 	 */
 	public function __construct( int $form_id ) {
+
+		if ( ! defined( 'WS_FORM_VERSION' ) ) {
+			throw new DataSourceNotFoundException( 'WS Form plugin not found' );
+		}
+
 		try {
 			$this->ws_form_submit_export = new \WS_Form_Submit_Export( $form_id );
 		} catch ( Exception $e ) {
