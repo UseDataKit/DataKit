@@ -73,7 +73,7 @@ final class GravityFormsDataSource extends BaseDataSource {
 			throw new DataSourceNotFoundException( sprintf( 'Gravity Forms data source (%d) not found', $form_id ) );
 		}
 
-		require_once( \GFCommon::get_base_path() . '/export.php' );
+		require_once \GFCommon::get_base_path() . '/export.php';
 
 		$this->form = GFExport::add_default_export_fields( $form );
 	}
