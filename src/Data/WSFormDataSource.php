@@ -1,7 +1,9 @@
 <?php
 
-namespace DataKit\DataViews\Data;
+namespace DataKit\Plugin\Data;
 
+use DataKit\DataViews\Data\BaseDataSource;
+use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\Data\Exception\DataSourceNotFoundException;
 use DataKit\DataViews\Data\Exception\DataNotFoundException;
 use DataKit\DataViews\DataView\Operator;
