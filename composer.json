@@ -21,12 +21,8 @@
 	],
 	"repositories": [
 		{
-			"type": "path",
-			"url": "../DataKit-sdk"
-		},
-		{
 			"type": "vcs",
-			"url": "git@github.com:GravityKit/DataKit.git"
+			"url": "git@github.com:UseDataKit/SDK.git"
 		}
 	],
 	"require": {
