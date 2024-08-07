@@ -286,6 +286,6 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function can_delete(): bool {
-		return \WS_Form_Common::can_user('delete_submission');
+		return \WS_Form_Common::can_user( 'delete_submission' );
 	}
 }

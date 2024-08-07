@@ -1,73 +1,70 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards based custom ruleset for your plugin">
-	<description>Generally-applicable sniffs for WordPress plugins.</description>
+<ruleset name="DataKit">
+	<!-- General -->
+	<config name="testVersion" value="7.4-"/>
 
-	<!-- What to scan -->
-	<file>.</file>
-	<exclude-pattern>/vendor/</exclude-pattern>
-	<exclude-pattern>/node_modules/</exclude-pattern>
-	<exclude-pattern>/tests/</exclude-pattern>
-
-	<!-- How to scan -->
-	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
-	<!-- Annotated ruleset: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
-	<arg value="sp"/> <!-- Show sniff and progress -->
-	<arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
 	<arg name="colors"/>
+	<arg value="sp"/>
 	<arg name="extensions" value="php"/>
-	<arg name="parallel" value="8"/><!-- Enables parallel processing when available for faster results. -->
+	<arg name="parallel" value="20"/>
 
-	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="5.3-"/>
-	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
-	<config name="minimum_supported_wp_version" value="4.6"/>
+	<file>.</file>
 
-	<config name="text_domain" value="trustedlogin, default" />
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.PHP.DisallowShortTernary.Found"/>
+		<exclude name="WordPress.WhiteSpace.PrecisionAlignment.Found"/>
+		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents"/>
+		<exclude name="WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents"/>
+		<exclude name="WordPress.WP.CapitalPDangit.DeprecatedWhitelistCommentFound"/>
 
-	<!-- Rules: Check PHP version compatibility -->
-	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
-	<rule ref="PHPCompatibilityWP"/>
+		<exclude name="Squiz.Commenting.FunctionComment.EmptyThrows"/>
+		<exclude name="Squiz.Commenting.FileComment.Missing"/>
+		<exclude name="Squiz.Commenting.ClassComment.Missing"/>
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>
 
-	<!-- Rules: WordPress Coding Standards -->
-	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
-	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
-	<!-- Rules -->
-	<rule ref="WordPress">
-		<!-- Allow short ternary assignment. -->
-		<!--
-		<exclude name="Universal.Operators.DisallowShortTernary" />
-		-->
-
-		<!-- Allow short prefixes (tl) — we are namespacing everything. -->
-		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed" />
-
-		<!-- Allow // comments in index.php files. -->
-		<exclude name="Squiz.Commenting.FileComment.WrongStyle" />
-
-		<!-- Enforce short array syntax. https://github.com/WordPress/WordPress-Coding-Standards/issues/1607#issuecomment-1605730869 -->
-		<!--
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
-		-->
 
-		<!-- Allow PSR file name & class names. -->
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent.SpacesUsed"/>
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
 
-		<!-- Allow different hook naming structures. -->
-		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.OpeningIndent"/>
+		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+
+		<!-- DataKit specific excludes -->
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing"/>
+		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+		<exclude name="WordPress.WP.AlternativeFunctions.json_encode_json_encode"/>
+		<exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
 	</rule>
 
-	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+	<rule ref="WordPress-Docs"/>
+
+	<rule ref="WordPress-Extra"/>
+
+	<rule ref="PHPCompatibility"/>
+
+	<rule ref="PHPCompatibilityWP">
+		<exclude-pattern>bin/*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array" value="tl,trustedlogin"/>
+			<property name="text_domain" type="array">
+				<element value="dk-datakit"/>
+			</property>
 		</properties>
 	</rule>
 
-	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
-		<properties>
-			<property name="blank_line_check" value="true"/>
-		</properties>
-	</rule>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/frontend/*</exclude-pattern>
+	<exclude-pattern>*/docs/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/vendor_prefixed/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
 </ruleset>
