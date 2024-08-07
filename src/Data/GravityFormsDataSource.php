@@ -155,7 +155,7 @@ final class GravityFormsDataSource extends BaseDataSource {
 	 * @return array The search criteria.
 	 */
 	private function get_search_criteria(): array {
-		if ( ! $this->filters && ! $this->search ) {
+		if ( ! $this->filters && ( ! $this->search || $this->search->is_empty() ) ) {
 			return [];
 		}
 
@@ -179,7 +179,7 @@ final class GravityFormsDataSource extends BaseDataSource {
 			$filters['field_filters'][] = [
 				'field'    => '0', // All fields.
 				'operator' => 'contains',
-				'value'    => $this->search,
+				'value'    => (string) $this->search,
 			];
 		}
 

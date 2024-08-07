@@ -7,6 +7,7 @@ use DataKit\DataViews\DataView\DataView;
 use DataKit\DataViews\DataView\DataViewRepository;
 use DataKit\DataViews\DataView\Filters;
 use DataKit\DataViews\DataView\Pagination;
+use DataKit\DataViews\DataView\Search;
 use DataKit\DataViews\DataView\Sort;
 use WP_Error;
 use WP_REST_Request;
@@ -71,7 +72,7 @@ final class ViewController {
 			// Update view with provided params.
 			$data_source = $data_view->data_source()
 				->filter_by( Filters::from_array( $params['filters'] ?? [] ) )
-				->search_by( $params['search'] ?? '' );
+				->search_by( Search::from_string( $params['search'] ?? '' ) );
 
 			$pagination = ( $params['page'] ?? null ) ? Pagination::from_array( $params ) : Pagination::default();
 
