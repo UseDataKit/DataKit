@@ -57,7 +57,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function id(): string {
-		return sprintf( 'wpuser-%s', wp_hash( $this->base_query->query_vars ) );
+		return sprintf( 'wpuser-%s', wp_hash( wp_json_encode( $this->base_query->query_vars ) ) );
 	}
 
 	/**
@@ -108,7 +108,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 		}
 
 		// Get all user meta data.
-		$user_meta = get_user_meta( $id );
+		$user_meta = get_user_meta( (int) $id );
 
 		// Flatten user meta.
 		$flattened_meta = [];
@@ -190,12 +190,11 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 */
 	public function delete_data_by_id( string ...$ids ): void {
 		foreach ( $ids as $id ) {
-			$id = (int) $id;
-			if ( ! get_userdata( $id ) ) {
+			if ( ! get_userdata( (int) $id ) ) {
 				throw DataNotFoundException::with_id( $this, $id );
 			}
 
-			wp_delete_user( $id );
+			wp_delete_user( (int) $id );
 		}
 	}
 
