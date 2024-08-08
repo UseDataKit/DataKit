@@ -48,11 +48,17 @@
 		"overtrue/phplint": "^3.4"
 	},
 	"scripts": {
-		"test":    "./vendor/bin/phpunit",
+		"suite": [
+			"composer test",
+			"composer linter",
+			"composer sniffer",
+			"composer analyse"
+		],
+		"test": "./vendor/bin/phpunit",
 		"analyse": "./vendor/bin/phpstan analyse",
 		"sniffer": "./vendor/bin/phpcs",
-		"format":  "./vendor/bin/phpcbf --standard=.phpcs.xml.dist --report-summary --report-source",
-		"linter":  "./vendor/bin/phplint --no-progress --no-cache -v",
+		"format": "./vendor/bin/phpcbf --standard=phpcs.xml.dist --report-summary --report-source",
+		"linter": "./vendor/bin/phplint --no-progress --no-cache -v",
 		"post-install-cmd": [
 			"composer dump-autoload -o"
 		],
