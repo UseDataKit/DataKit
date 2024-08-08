@@ -15,14 +15,6 @@ use DataKit\DataViews\Field\Field;
  * @since $ver$
  */
 final class WPUserDataSource extends BaseDataSource implements MutableDataSource {
-	/**
-	 * The unique ID for the data source.
-	 *
-	 * @since $ver$
-	 *
-	 * @var string
-	 */
-	private string $id;
 
 	/**
 	 * The base WP_User_Query instance that all queries will use as a starting point.
