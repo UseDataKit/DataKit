@@ -45,7 +45,7 @@ final class DataViewPlugin {
 		DataViewShortcode::get_instance( $this->data_view_repository );
 
 		/**
-		 * Overwrites the default amount of results per page.
+		 * Modifies the default amount of results per page.
 		 *
 		 * @filter `datakit/dataview/pagination/per-page-default`
 		 *
@@ -89,12 +89,30 @@ final class DataViewPlugin {
 			DATAVIEW_VERSION,
 		);
 
+		$fetch_options = [
+			'headers' => [
+				'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
+			],
+		];
+
+		/**
+		 * Modifies the default options passed to the `fetch` calls.
+		 *
+		 * @filter `datakit/dataview/fetch/options`
+		 *
+		 * @since  $ver$
+		 *
+		 * @param array $fetch_options The default options passed to the `fetch` calls.
+		 */
+		$fetch_options = (array) apply_filters( 'datakit/dataview/fetch/options', $fetch_options );
+
 		wp_add_inline_script(
 			'datakit/dataview',
 			implode(
 				"\n",
 				[
 					'let datakit_dataviews = {};',
+					sprintf( 'const datakit_fetch_options = %s;', wp_json_encode( $fetch_options ) ?? '{}' ),
 					sprintf(
 						'const datakit_dataviews_rest_endpoint = "%s";',
 						esc_attr( Router::get_url() ),
