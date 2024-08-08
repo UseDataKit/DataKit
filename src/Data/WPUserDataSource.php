@@ -6,9 +6,6 @@ use DataKit\DataViews\Data\BaseDataSource;
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\Data\Exception\DataNotFoundException;
 use DataKit\DataViews\Data\Exception\ActionForbiddenException;
-use DataKit\DataViews\DataView\Filters;
-use DataKit\DataViews\DataView\Sort;
-use DataKit\DataViews\Field\Field;
 
 /**
  * A data source backed by WordPress users.
