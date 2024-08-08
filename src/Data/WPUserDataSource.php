@@ -101,7 +101,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function get_data_by_id( string $id ): array {
-		$user = get_userdata( $id );
+		$user = get_userdata( (int) $id );
 
 		if ( ! $user ) {
 			throw DataNotFoundException::with_id( $this, $id );
@@ -190,6 +190,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 */
 	public function delete_data_by_id( string ...$ids ): void {
 		foreach ( $ids as $id ) {
+			$id = (int) $id;
 			if ( ! get_userdata( $id ) ) {
 				throw DataNotFoundException::with_id( $this, $id );
 			}
