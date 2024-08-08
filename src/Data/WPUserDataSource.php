@@ -119,12 +119,14 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 		// Combine user data with user meta
 		return array_merge(
 			[
-				'id'              => $user->ID,
-				'user_login'      => $user->user_login,
-				'user_email'      => $user->user_email,
-				'user_registered' => $user->user_registered,
 				'display_name'    => $user->display_name,
+				'id'              => $user->ID,
+				'user_email'      => $user->user_email,
+				'user_login'      => $user->user_login,
+				'user_nicename'   => $user->user_nicename,
+				'user_registered' => $user->user_registered,
 				'user_status'     => $user->user_status,
+				'user_url'        => $user->user_url,
 			],
 			$flattened_meta
 		);
@@ -203,12 +205,14 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 */
 	public function get_fields(): array {
 		$fields = [
-			'id'              => __( 'ID', 'dk-datakit' ),
-			'user_login'      => __( 'User Login', 'dk-datakit' ),
-			'user_email'      => __( 'User Email', 'dk-datakit' ),
-			'user_registered' => __( 'User Registered', 'dk-datakit' ),
 			'display_name'    => __( 'Display Name', 'dk-datakit' ),
+			'id'              => __( 'ID', 'dk-datakit' ),
+			'user_email'      => __( 'User Email', 'dk-datakit' ),
+			'user_login'      => __( 'User Login', 'dk-datakit' ),
+			'user_nicename'   => __( 'User Nicename', 'dk-datakit' ),
+			'user_registered' => __( 'User Registered', 'dk-datakit' ),
 			'user_status'     => __( 'User Status', 'dk-datakit' ),
+			'user_url'        => __( 'User URL', 'dk-datakit' ),
 		];
 
 		// Add all registered user meta keys
