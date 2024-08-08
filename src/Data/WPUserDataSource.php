@@ -157,11 +157,8 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 
 		$sort = $this->sort->to_array();
 
-		// TODO: The UUID separator isn't getting removed by the Sort ("user_email--DK--a62a82477ba187a2a4aacf09b9a0d145").
-		$field = explode( Field::UUID_GLUE, $sort['field'] );
-
 		return [
-			'orderby' => $field[0],
+			'orderby' => $sort['field'],
 			'order'   => strtoupper( $sort['direction'] ),
 		];
 	}
