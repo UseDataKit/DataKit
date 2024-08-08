@@ -5,6 +5,7 @@ namespace DataKit\Plugin\Data;
 use DataKit\DataViews\Data\BaseDataSource;
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\Data\Exception\DataNotFoundException;
+use DataKit\DataViews\Data\Exception\ActionForbiddenException;
 use DataKit\DataViews\DataView\Filters;
 use DataKit\DataViews\DataView\Sort;
 use DataKit\DataViews\Field\Field;
@@ -175,6 +176,9 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	/**
 	 * @inheritDoc
 	 *
+	 * @throws ActionForbiddenException If the current user tries to delete their own user.
+	 * @throws DataNotFoundException    If the user does not exist before deletion.
+	 *
 	 * @since $ver$
 	 */
 	public function delete_data_by_id( string ...$ids ): void {
@@ -184,6 +188,10 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 		foreach ( $ids as $id ) {
 			if ( ! get_userdata( (int) $id ) ) {
 				throw DataNotFoundException::with_id( $this, $id );
+			}
+
+			if ( get_current_user_id() === (int) $id ) {
+				throw new ActionForbiddenException( $this, esc_html__( 'You cannot delete your own user.', 'dk-datakit' ) );
 			}
 
 			wp_delete_user( (int) $id );
