@@ -181,6 +181,9 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function delete_data_by_id( string ...$ids ): void {
+		// wp_delete_user() requires user.php, which isn't loaded inside a REST request.
+		require_once ABSPATH . 'wp-admin/includes/user.php';
+
 		foreach ( $ids as $id ) {
 			if ( ! get_userdata( (int) $id ) ) {
 				throw DataNotFoundException::with_id( $this, $id );
