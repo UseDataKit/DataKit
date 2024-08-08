@@ -4,6 +4,7 @@ namespace DataKit\Plugin\Data;
 
 use Closure;
 use DataKit\DataViews\Data\BaseDataSource;
+use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\Data\Exception\DataSourceNotFoundException;
 use DataKit\DataViews\DataView\Operator;
 use GF_Field;
@@ -16,7 +17,7 @@ use WP_Error;
  *
  * @since $ver$
  */
-final class GravityFormsDataSource extends BaseDataSource {
+final class GravityFormsDataSource extends BaseDataSource implements MutableDataSource {
 	/**
 	 * Fields that are top-level search keys.
 	 *
@@ -85,6 +86,28 @@ final class GravityFormsDataSource extends BaseDataSource {
 	 */
 	public function id(): string {
 		return sprintf( 'gravity-forms-%d', $this->form['id'] );
+	}
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @since $ver$
+	 */
+	public function can_delete(): bool {
+		// phpcs:ignore WordPress.WP.Capabilities.Unknown
+		return current_user_can( 'gform_full_access' ) || current_user_can( 'gravityforms_delete_entries' );
+	}
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @since $ver$
+	 */
+	public function delete_data_by_id( string ...$ids ): void {
+		// Loop through each ID and delete the entry.
+		foreach ( $ids as $id ) {
+			GFAPI::delete_entry( (int) $id );
+		}
 	}
 
 	/**
