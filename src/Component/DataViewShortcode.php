@@ -84,11 +84,10 @@ final class DataViewShortcode {
 			wp_enqueue_script( 'datakit/dataview' );
 			wp_enqueue_style( 'datakit/dataview' );
 
-			$dataview = $this->data_view_repository->get( $id );
-
 			try {
-				$js = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
-				$js = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
+				$dataview = $this->data_view_repository->get( $id );
+				$js       = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
+				$js       = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
 			} catch ( DataViewException $e ) {
 				return '';
 			}
@@ -104,6 +103,7 @@ final class DataViewShortcode {
 					},
 				);
 			}
+
 			wp_add_inline_script( 'datakit/dataview', $js, 'before' );
 
 			$this->rendered[] = $id;

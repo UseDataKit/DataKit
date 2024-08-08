@@ -7,8 +7,11 @@ parameters:
         - src
         - tests
 
+    excludePaths:
+        - src/Data/WSFormDataSource.php # Disable once we can source WS Forms in CI.
+
     scanDirectories:
-        # - '<your-path-to-gravityforms>'
+        - vendor/gravityforms/gravityforms # Gravity Forms has no `autoload` section, so we need to configure the path.
 
     scanFiles:
         - datakit.php

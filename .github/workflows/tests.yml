@@ -13,7 +13,7 @@ jobs:
       matrix:
         php-versions: [ '7.4', '8.0','8.1', '8.2', '8.3' ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -24,7 +24,7 @@ jobs:
         run: composer validate
       - name: Cache dependencies
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-build-${{ matrix.php-versions }}-${{ hashFiles('composer.json') }}
@@ -36,8 +36,6 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }'
         run: composer install --prefer-dist --no-progress --no-scripts
-      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-      # Docs: https://getcomposer.org/doc/articles/scripts.md
 
       - name: Run linter
         run: composer run-script linter
@@ -48,6 +46,5 @@ jobs:
       - name: Run Code Sniffer
         run: composer run-script sniffer
 
-# Disabled. Needs gravity forms available to read symbols.
-#      - name: Run static analysis
-#        run: composer run-script analyse
+      - name: Run static analysis
+        run: composer run-script analyse

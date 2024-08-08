@@ -23,6 +23,10 @@
 		{
 			"type": "vcs",
 			"url": "git@github.com:UseDataKit/SDK.git"
+		},
+		{
+			"type": "vcs",
+			"url": "git@github.com:gravityforms/gravityforms.git"
 		}
 	],
 	"require": {
@@ -40,6 +44,7 @@
 		}
 	},
 	"require-dev": {
+		"gravityforms/gravityforms": "dev-master",
 		"phpunit/phpunit": "~8.5",
 		"szepeviktor/phpstan-wordpress": "^1.3",
 		"wp-coding-standards/wpcs": "^3.1",
@@ -48,11 +53,17 @@
 		"overtrue/phplint": "^3.4"
 	},
 	"scripts": {
-		"test":    "./vendor/bin/phpunit",
+		"suite": [
+			"composer test",
+			"composer linter",
+			"composer sniffer",
+			"composer analyse"
+		],
+		"test": "./vendor/bin/phpunit",
 		"analyse": "./vendor/bin/phpstan analyse",
 		"sniffer": "./vendor/bin/phpcs",
-		"format":  "./vendor/bin/phpcbf --standard=.phpcs.xml.dist --report-summary --report-source",
-		"linter":  "./vendor/bin/phplint --no-progress --no-cache -v",
+		"format": "./vendor/bin/phpcbf --standard=phpcs.xml.dist --report-summary --report-source",
+		"linter": "./vendor/bin/phplint --no-progress --no-cache -v",
 		"post-install-cmd": [
 			"composer dump-autoload -o"
 		],
