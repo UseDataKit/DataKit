@@ -107,16 +107,16 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 			throw DataNotFoundException::with_id( $this, $id );
 		}
 
-		// Get all user meta data
+		// Get all user meta data.
 		$user_meta = get_user_meta( $id );
 
-		// Flatten user meta
+		// Flatten user meta.
 		$flattened_meta = [];
 		foreach ( $user_meta as $key => $value ) {
 			$flattened_meta[ $key ] = maybe_unserialize( $value[0] );
 		}
 
-		// Combine user data with user meta
+		// Combine user data with user meta.
 		return array_merge(
 			[
 				'display_name'    => $user->display_name,
@@ -169,8 +169,8 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 		$field = explode( Field::UUID_GLUE, $sort['field'] );
 
 		return [
-			'orderby'  => $field[0],
-			'order'    => strtoupper( $sort['direction'] ),
+			'orderby' => $field[0],
+			'order'   => strtoupper( $sort['direction'] ),
 		];
 	}
 
@@ -215,7 +215,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 			'user_url'        => __( 'User URL', 'dk-datakit' ),
 		];
 
-		// Add all registered user meta keys
+		// Add all registered user meta keys.
 		global $wpdb;
 		$meta_keys = $wpdb->get_col( "SELECT DISTINCT meta_key FROM $wpdb->usermeta" );
 		foreach ( $meta_keys as $meta_key ) {
