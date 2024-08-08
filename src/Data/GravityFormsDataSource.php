@@ -3,12 +3,10 @@
 namespace DataKit\Plugin\Data;
 
 use Closure;
+use DataKit\DataViews\Data\BaseDataSource;
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\Data\Exception\DataSourceNotFoundException;
 use DataKit\DataViews\DataView\Operator;
-use DataKit\DataViews\DataView\Filters;
-use DataKit\DataViews\DataView\Search;
-use DataKit\DataViews\DataView\Sort;
 use GF_Field;
 use GFAPI;
 use GFExport;
@@ -19,7 +17,7 @@ use WP_Error;
  *
  * @since $ver$
  */
-final class GravityFormsDataSource implements MutableDataSource {
+final class GravityFormsDataSource extends BaseDataSource implements MutableDataSource {
 	/**
 	 * Fields that are top-level search keys.
 	 *
@@ -106,44 +104,10 @@ final class GravityFormsDataSource implements MutableDataSource {
 	 * @since $ver$
 	 */
 	public function delete_data_by_id( string ...$ids ): void {
-
 		// Loop through each ID and delete the entry.
 		foreach ( $ids as $id ) {
 			GFAPI::delete_entry( (int) $id );
 		}
-	}
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @since $ver$
-	 */
-	public function filter_by( ?Filters $filters ): GravityFormsDataSource {
-		$this->filters = $filters;
-
-		return $this;
-	}
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @since $ver$
-	 */
-	public function search_by( ?Search $search ): GravityFormsDataSource {
-		$this->search = $search;
-
-		return $this;
-	}
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @since $ver$
-	 */
-	public function sort_by( ?Sort $sort ) {
-		$this->sort = $sort;
-
-		return $this;
 	}
 
 	/**
