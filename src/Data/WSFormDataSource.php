@@ -3,10 +3,12 @@
 namespace DataKit\Plugin\Data;
 
 use DataKit\DataViews\Data\BaseDataSource;
+use DataKit\DataViews\Data\Exception\DataSourceException;
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\Data\Exception\DataSourceNotFoundException;
 use DataKit\DataViews\Data\Exception\DataNotFoundException;
 use DataKit\DataViews\DataView\Operator;
+use Exception;
 
 /**
  * Data source backed by a WS Form form.
@@ -46,12 +48,11 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 	 *
 	 * @since $ver$
 	 *
-	 * @throws DataSourceNotFoundException If the WS Form plugin is not found.
-	 *
 	 * @param int $form_id The form ID.
+	 *
+	 * @throws DataSourceNotFoundException If the WS Form plugin is not found.
 	 */
 	public function __construct( int $form_id ) {
-
 		if ( ! defined( 'WS_FORM_VERSION' ) ) {
 			throw new DataSourceNotFoundException( 'WS Form plugin not found' );
 		}
@@ -93,7 +94,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 			);
 
 		} catch ( Exception $e ) {
-			throw new DataNotFoundException( $e->getMessage() );
+			throw new DataSourceException( $e->getMessage() );
 		}
 
 		// Microcache entries on their ID.
@@ -111,24 +112,22 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 	public function get_data_by_id( string $id ): array {
 		if ( isset( $this->entries[ $id ] ) ) {
 			return $this->entries[ $id ];
+		}
 
-		} else {
-
-			// Get row.
-			try {
-				// Get submission by ID.
-				$entry = $this->ws_form_submit_export->get_row_by_id(
-					$id,     // ID.
-					true,    // Bypass capabilities check.
-					false    // Clear hidden fields.
-				);
-			} catch ( Exception $e ) {
-				throw DataNotFoundException::with_id( $this, $id );
-			}
+		// Get row.
+		try {
+			// Get submission by ID.
+			$entry = $this->ws_form_submit_export->get_row_by_id(
+				$id,     // ID.
+				true,    // Bypass capabilities check.
+				false    // Clear hidden fields.
+			);
+		} catch ( Exception $e ) {
+			throw new DataSourceException( $e->getMessage() );
 		}
 
 		if ( ! is_array( $entry ) ) {
-			return [];
+			throw DataNotFoundException::with_id( $this, $id );
 		}
 
 		return $entry;
@@ -143,13 +142,13 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 		try {
 			// Get row count.
 			return $this->ws_form_submit_export->get_row_count(
-				self::get_keyword(),    // Keyword.
-				self::get_filters(),    // Filters.
+				$this->get_keyword(),    // Keyword.
+				$this->get_filters(),    // Filters.
 				true                    // Bypass capabilities check.
 			);
 
 		} catch ( Exception $e ) {
-			throw new DataNotFoundException( $e->getMessage() );
+			throw new DataNotFoundException( $this, $e->getMessage() );
 		}
 	}
 
@@ -165,7 +164,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 			return '';
 		}
 
-		return $this->search;
+		return (string) $this->search;
 	}
 
 	/**
@@ -194,7 +193,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 		$filters = $this->filters->to_array();
 
 		foreach ( $filters as &$filter ) {
-			if ( $operator_map[ $filter['operator'] ] ?? false ) {
+			if ( $operator_map[ $filter['operator'] ] ?? null ) {
 				$filter['operator'] = $operator_map[ $filter['operator'] ];
 			}
 		}
@@ -259,7 +258,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 				$this->fields[ "field_{$key}" ] = $field['label'];
 			}
 		} catch ( Exception $e ) {
-			throw new DataNotFoundException( $e->getMessage() );
+			throw new DataNotFoundException( $this, $e->getMessage() );
 		}
 
 		return $this->fields;
@@ -282,7 +281,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 					true                  // Bypass capabilities check (Controlled by DataView deletable method).
 				);
 			} catch ( Exception $e ) {
-				throw new DataNotFoundException( $e->getMessage() );
+				throw new DataNotFoundException( $this, $e->getMessage() );
 			}
 		}
 	}
