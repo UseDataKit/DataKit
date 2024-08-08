@@ -25,20 +25,29 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	private string $id;
 
 	/**
+	 * The base WP_User_Query instance that all queries will use as a starting point.
+	 *
+	 * Example: new \WP_User_Query( [ 'role' => 'editor' ] ) would be the base, and then searches will be performed
+	 * on top of that.
+	 *
+	 * @since $ver$
+	 *
+	 * @var \WP_User_Query
+	 */
+	private \WP_User_Query $base_query;
+
+	/**
 	 * Creates the data source.
 	 *
 	 * @since $ver$
 	 *
-	 * @param string $id The data source identifier.
-	 * @param \WP_User_Query|array|null $query The WP_User_Query instance or an array of query arguments or null.
+	 * @param \WP_User_Query|array|string|null $query The WP_User_Query instance or an array of query arguments or null.
 	 */
-	public function __construct( string $id, $query = null ) {
-		$this->id = $id;
-
+	public function __construct( $query = null ) {
 		if ( $query instanceof \WP_User_Query ) {
-			$this->user_query = $query;
+			$this->base_query = $query;
 		} else {
-			$this->user_query = new \WP_User_Query( $query );
+			$this->base_query = new \WP_User_Query( $query );
 		}
 	}
 
@@ -52,22 +61,36 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	}
 
 	/**
+	 * Merges the base query with additional query arguments.
+	 *
+	 * @since $ver$
+	 *
+	 * @param array $additional_args Additional query arguments.
+	 */
+	public function merge_query( array $additional_args = [] ): array {
+		return array_merge( $this->base_query->query_vars, $additional_args );
+	}
+
+	/**
 	 * @inheritDoc
 	 *
 	 * @since $ver$
 	 */
 	public function get_data_ids( int $limit = 100, int $offset = 0 ): array {
 		$query = array_merge(
-			$this->get_search_criteria(),
 			$this->get_sorting(),
 			[
 				'number' => $limit,
 				'offset' => $offset,
 				'fields' => 'ID',
+				'search' => '*' . (string) $this->search . '*',
 			]
 		);
+
+		$query = $this->merge_query( $query );
+
 		$user_query = new \WP_User_Query( $query );
-		$results = $user_query->get_results();
+		$results    = $user_query->get_results();
 
 		return $results ? array_map( 'strval', $results ) : [];
 	}
@@ -113,50 +136,17 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function count(): int {
-		$query = array_merge(
-			$this->get_search_criteria(),
+		$query = $this->merge_query(
 			[
 				'fields'      => 'ID',
 				'count_total' => true,
+				'search'      => '*' . (string) $this->search . '*',
 			]
 		);
+
 		$user_query = new \WP_User_Query( $query );
+
 		return $user_query->get_total();
-	}
-
-	/**
-	 * Returns the search criteria based on the filters.
-	 *
-	 * @since $ver$
-	 *
-	 * @return array The search criteria.
-	 */
-	private function get_search_criteria(): array {
-		if ( ! $this->filters && ( ! $this->search || $this->search->is_empty() ) ) {
-			return [];
-		}
-
-		$criteria = [];
-
-		if ( $this->filters ) {
-			$criteria = array_merge(
-				$criteria,
-				array_reduce(
-					$this->filters->to_array(),
-					function ( $carry, $filter ) {
-						$carry[$filter['field']] = $filter['value'];
-						return $carry;
-					},
-					[]
-				)
-			);
-		}
-
-		if ( $this->search ) {
-			$criteria['search'] = '*' . $this->search . '*';
-		}
-
-		return $criteria;
 	}
 
 	/**
