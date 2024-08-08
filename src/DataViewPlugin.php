@@ -112,7 +112,7 @@ final class DataViewPlugin {
 				"\n",
 				[
 					'let datakit_dataviews = {};',
-					sprintf( 'const datakit_fetch_options = %s;', wp_json_encode( $fetch_options ) ?? '{}' ),
+					sprintf( 'const datakit_fetch_options = %s;', wp_json_encode( $fetch_options ) ?: '{}' ),
 					sprintf(
 						'const datakit_dataviews_rest_endpoint = "%s";',
 						esc_attr( Router::get_url() ),

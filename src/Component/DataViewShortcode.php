@@ -86,8 +86,8 @@ final class DataViewShortcode {
 
 			try {
 				$dataview = $this->data_view_repository->get( $id );
-				$js = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
-				$js = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
+				$js       = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
+				$js       = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
 			} catch ( DataViewException $e ) {
 				return '';
 			}
