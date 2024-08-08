@@ -57,7 +57,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function id(): string {
-		return $this->id;
+		return sprintf( 'wpuser-%s', wp_hash( $this->base_query->query_vars ) );
 	}
 
 	/**
