@@ -60,7 +60,8 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 		try {
 			$this->ws_form_submit_export = new \WS_Form_Submit_Export( $form_id );
 		} catch ( Exception $e ) {
-			throw new DataSourceNotFoundException( sprintf( 'WS Form data source (%d) not found', $form_id ) );
+			// translators: %d is the form ID.
+			throw new DataSourceNotFoundException( sprintf( esc_html__( 'WS Form data source (%d) not found', 'dk-datakit' ), $form_id ) );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
@@ -82,19 +83,19 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 		try {
 			// Get submissions.
 			$entries = $this->ws_form_submit_export->get_rows(
-				$limit,                   // Limit.
-				$offset,                  // Offset.
-				$this->get_keyword(),     // Keyword.
-				$this->get_filters(),     // Filters.
-				$this->get_order_by(),    // Order by.
-				$this->get_order(),       // Order.
-				true,                     // Bypass capabilities check.
-				false,                    // Clear hidden fields.
-				false                     // Sanitize rows (DataKit already sanitizes data, set to false to prevent double escaping).
+				$limit,                       // Limit.
+				$offset,                      // Offset.
+				$this->get_keyword(),         // Keyword.
+				$this->get_filters(),         // Filters.
+				$this->get_order_by(),        // Order by.
+				$this->get_order(),           // Order.
+				true, // Bypass capabilities check.
+				false,        // Clear hidden fields.
+				false             // Sanitize rows (DataKit already sanitizes data, set to false to prevent double escaping).
 			);
 
 		} catch ( Exception $e ) {
-			throw new DataSourceException( $e->getMessage() );
+			throw new DataSourceException( esc_html( $e->getMessage() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		// Microcache entries on their ID.
@@ -123,11 +124,11 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 				false    // Clear hidden fields.
 			);
 		} catch ( Exception $e ) {
-			throw new DataSourceException( $e->getMessage() );
+			throw new DataSourceException( esc_html( $e->getMessage() ) );
 		}
 
 		if ( ! is_array( $entry ) ) {
-			throw DataNotFoundException::with_id( $this, $id );
+			throw DataNotFoundException::with_id( $this, $id ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $entry;
@@ -142,13 +143,13 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 		try {
 			// Get row count.
 			return $this->ws_form_submit_export->get_row_count(
-				$this->get_keyword(),    // Keyword.
-				$this->get_filters(),    // Filters.
-				true                    // Bypass capabilities check.
+				$this->get_keyword(),        // Keyword.
+				$this->get_filters(),        // Filters.
+				true // Bypass capabilities check.
 			);
 
 		} catch ( Exception $e ) {
-			throw new DataNotFoundException( $this, $e->getMessage() );
+			throw new DataNotFoundException( $this, esc_html( $e->getMessage() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
@@ -258,7 +259,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 				$this->fields[ "field_{$key}" ] = $field['label'];
 			}
 		} catch ( Exception $e ) {
-			throw new DataNotFoundException( $this, $e->getMessage() );
+			throw new DataNotFoundException( $this, esc_html( $e->getMessage() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $this->fields;
@@ -276,12 +277,12 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 				$ws_form_submit     = new \WS_Form_Submit();
 				$ws_form_submit->id = $id;
 				$ws_form_submit->db_delete(
-					false, // Permanently delete (false = Trash).
-					true,     // Count update (Statistics).
-					true                  // Bypass capabilities check (Controlled by DataView deletable method).
+					false,        // Permanently delete (false = Trash).
+					true,            // Count update (Statistics).
+					true // Bypass capabilities check (Controlled by DataView deletable method).
 				);
 			} catch ( Exception $e ) {
-				throw new DataNotFoundException( $this, $e->getMessage() );
+				throw new DataNotFoundException( $this, esc_html( $e->getMessage() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 		}
 	}

@@ -97,6 +97,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 		$user = get_userdata( (int) $id );
 
 		if ( ! $user ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw DataNotFoundException::with_id( $this, $id );
 		}
 
@@ -186,12 +187,13 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 
 		foreach ( $ids as $id ) {
 			if ( ! get_userdata( (int) $id ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 				throw DataNotFoundException::with_id( $this, $id );
 			}
 
 			if ( get_current_user_id() === (int) $id ) {
 				throw new ActionForbiddenException(
-					$this,
+					$this, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					esc_html__( 'You cannot delete your own user.', 'dk-datakit' ),
 				);
 			}
@@ -206,24 +208,6 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function get_fields(): array {
-		$fields = [
-			'display_name'    => __( 'Display Name', 'dk-datakit' ),
-			'id'              => __( 'ID', 'dk-datakit' ),
-			'user_email'      => __( 'User Email', 'dk-datakit' ),
-			'user_login'      => __( 'User Login', 'dk-datakit' ),
-			'user_nicename'   => __( 'User Nicename', 'dk-datakit' ),
-			'user_registered' => __( 'User Registered', 'dk-datakit' ),
-			'user_status'     => __( 'User Status', 'dk-datakit' ),
-			'user_url'        => __( 'User URL', 'dk-datakit' ),
-		];
-
-		// Add all registered user meta keys.
-		global $wpdb;
-		$meta_keys = $wpdb->get_col( "SELECT DISTINCT meta_key FROM $wpdb->usermeta" );
-		foreach ( $meta_keys as $meta_key ) {
-			$fields[ $meta_key ] = ucfirst( str_replace( '_', ' ', $meta_key ) );
-		}
-
-		return $fields;
+		return []; // Not yet implemented.
 	}
 }

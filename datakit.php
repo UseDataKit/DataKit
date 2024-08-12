@@ -3,7 +3,7 @@
  * Plugin Name:         DataKit
  * Description:         Easily create your own DataViews components with just PHP.
  * Plugin URI:          https://www.datakit.org
- * Version:             0.1.0
+ * Version:             1.0.0
  * Author:              DataKit
  * Author URI:          https://www.datakit.org
  * Text Domain:         dk-datakit
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 const DATAVIEW_PLUGIN_PATH = __FILE__;
-const DATAVIEW_VERSION     = '0.1.0';
+const DATAVIEW_VERSION     = '1.0.0';
 
 // Initialize the plugin.
 add_action(

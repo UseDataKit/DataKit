@@ -39,7 +39,8 @@ final class AttachmentDataSource {
 	): CsvDataSource {
 		$path = get_attached_file( $attachment_id );
 		if ( ! $path ) {
-			throw new DataSourceNotFoundException( sprintf( 'The attachment ID (%d) is not found.', $attachment_id ) );
+			// translators: %d is the attachment ID.
+			throw new DataSourceNotFoundException( sprintf( esc_html__( 'The attachment ID (%d) is not found.', 'dk-datakit' ), $attachment_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return new CsvDataSource( $path, $separator, $enclosure, $escape );
