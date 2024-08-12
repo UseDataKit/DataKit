@@ -16,7 +16,7 @@ parameters:
     scanFiles:
         - datakit.php
 
-    ignoreErrors:
-        -
-            message: '#Function __ invoked with 2 parameters, 1 required.#'
-            path: src/Data/WPUserDataSource.php
+#    ignoreErrors:
+#        -
+#            message: '#Function __ invoked with 2 parameters, 1 required.#'
+#            path: src/Data/WPUserDataSource.php
