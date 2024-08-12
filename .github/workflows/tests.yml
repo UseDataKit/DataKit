@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: vendor
-          key: ${{ runner.os }}-build-${{ matrix.php-versions }}-${{ hashFiles('composer.json') }}
+          key: ${{ runner.os }}-build-${{ matrix.php-versions }}-${{ hashFiles('composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ matrix.php-versions }}-
       - name: Install dependencies
