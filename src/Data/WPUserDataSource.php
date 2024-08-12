@@ -13,7 +13,6 @@ use DataKit\DataViews\Data\Exception\ActionForbiddenException;
  * @since $ver$
  */
 final class WPUserDataSource extends BaseDataSource implements MutableDataSource {
-
 	/**
 	 * The base WP_User_Query instance that all queries will use as a starting point.
 	 *
@@ -34,11 +33,14 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @param \WP_User_Query|array|string|null $query The WP_User_Query instance or an array of query arguments or null.
 	 */
 	public function __construct( $query = null ) {
-		if ( $query instanceof \WP_User_Query ) {
-			$this->base_query = $query;
-		} else {
-			$this->base_query = new \WP_User_Query( $query );
+		if ( ! $query instanceof \WP_User_Query ) {
+			$args = $query;
+			// Prevent initial query on creation of the data source.
+			$query = new \WP_User_Query();
+			$query->prepare_query( $args );
 		}
+
+		$this->base_query = $query;
 	}
 
 	/**
@@ -56,8 +58,10 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 *
 	 * @param array $additional_args Additional query arguments.
+	 *
+	 * @return array The updated query.
 	 */
-	public function merge_query( array $additional_args = [] ): array {
+	private function merge_query_vars( array $additional_args = [] ): array {
 		return array_merge( $this->base_query->query_vars, $additional_args );
 	}
 
@@ -74,11 +78,10 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 				'offset' => $offset,
 				'fields' => 'ID',
 				'search' => '*' . (string) $this->search . '*',
-			]
+			],
 		);
 
-		$query = $this->merge_query( $query );
-
+		$query      = $this->merge_query_vars( $query );
 		$user_query = new \WP_User_Query( $query );
 		$results    = $user_query->get_results();
 
@@ -118,7 +121,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 				'user_status'     => $user->user_status,
 				'user_url'        => $user->user_url,
 			],
-			$flattened_meta
+			$flattened_meta,
 		);
 	}
 
@@ -128,12 +131,12 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function count(): int {
-		$query = $this->merge_query(
+		$query = $this->merge_query_vars(
 			[
 				'fields'      => 'ID',
 				'count_total' => true,
 				'search'      => '*' . (string) $this->search . '*',
-			]
+			],
 		);
 
 		$user_query = new \WP_User_Query( $query );
@@ -172,11 +175,10 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 
 	/**
 	 * @inheritDoc
-	 *
-	 * @throws ActionForbiddenException If the current user tries to delete their own user.
-	 * @throws DataNotFoundException    If the user does not exist before deletion.
-	 *
 	 * @since $ver$
+	 *
+	 * @throws DataNotFoundException    If the user does not exist before deletion.
+	 * @throws ActionForbiddenException If the current user tries to delete their own user.
 	 */
 	public function delete_data_by_id( string ...$ids ): void {
 		// wp_delete_user() requires user.php, which isn't loaded inside a REST request.
@@ -188,7 +190,10 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 			}
 
 			if ( get_current_user_id() === (int) $id ) {
-				throw new ActionForbiddenException( $this, esc_html__( 'You cannot delete your own user.', 'dk-datakit' ) );
+				throw new ActionForbiddenException(
+					$this,
+					esc_html__( 'You cannot delete your own user.', 'dk-datakit' ),
+				);
 			}
 
 			wp_delete_user( (int) $id );
