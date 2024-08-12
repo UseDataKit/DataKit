@@ -62,7 +62,7 @@ final class ViewController {
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 *
-	 * @return array|WP_Error The data or error object.
+	 * @return array{data: array<string, mixed>, paginationInfo: array<string, int>}|WP_Error The data or error object.
 	 */
 	public function get_view( WP_REST_Request $request ) {
 		try {
@@ -96,7 +96,7 @@ final class ViewController {
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 *
-	 * @return array|WP_Error The response.
+	 * @return array{dataview_id: string, data_id: string, html: string}|WP_Error The response.
 	 */
 	public function get_data_item( WP_REST_Request $request ) {
 		$view_id = (string) ( $request->get_param( 'view_id' ) ?? '' );

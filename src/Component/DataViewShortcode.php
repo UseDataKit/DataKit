@@ -44,7 +44,7 @@ final class DataViewShortcode {
 	 *
 	 * @since $ver$
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	private array $rendered = [];
 
@@ -64,7 +64,7 @@ final class DataViewShortcode {
 	 *
 	 * @since $ver$
 	 *
-	 * @param array $attributes The shortcode attributes.
+	 * @param array<int|string, mixed> $attributes The shortcode attributes.
 	 *
 	 * @return string The shortcode output.
 	 * @todo  Add search & sorting attributes.

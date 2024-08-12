@@ -185,7 +185,7 @@ final class Router {
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 *
-	 * @return array|WP_Error
+	 * @return array<mixed>|WP_Error
 	 */
 	public function delete_view_data( WP_REST_Request $request ) {
 		try {
