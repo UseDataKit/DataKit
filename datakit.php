@@ -26,7 +26,7 @@ const DATAVIEW_VERSION     = '0.1.0';
 
 // Initialize the plugin.
 add_action(
-	'plugins_loaded',
+	'init',
 	function () {
 		try {
 			DataViewPlugin::get_instance(
