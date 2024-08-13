@@ -2,6 +2,7 @@
 
 namespace DataKit\Plugin\Rest;
 
+use DataKit\DataViews\Data\Exception\DataNotFoundException;
 use DataKit\DataViews\DataView\DataItem;
 use DataKit\DataViews\DataView\DataView;
 use DataKit\DataViews\DataView\DataViewRepository;
@@ -106,7 +107,12 @@ final class ViewController {
 			$dataview  = $this->dataview_repository->get( $view_id );
 			$data_item = $dataview->get_view_data_item( $data_id );
 		} catch ( \Exception $e ) {
-			return new WP_Error( 'datakit_dataview_get_item', $e->getMessage(), [ 'exception' => $e ] );
+			$data = [ 'exception' => $e ];
+			if ( $e instanceof DataNotFoundException ) {
+				$data['status'] = 404;
+			}
+
+			return new WP_Error( 'datakit_dataview_get_item', $e->getMessage(), $data );
 		}
 
 		ob_start();

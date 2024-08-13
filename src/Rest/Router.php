@@ -4,9 +4,6 @@ namespace DataKit\Plugin\Rest;
 
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\DataView\DataViewRepository;
-use DataKit\DataViews\DataView\Filters;
-use DataKit\DataViews\DataView\Pagination;
-use DataKit\DataViews\DataView\Sort;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Server;
@@ -171,7 +168,6 @@ final class Router {
 				return false;
 			}
 
-			// Todo: add test for user permissions.
 			return true;
 		} catch ( \Exception $e ) {
 			return false;
