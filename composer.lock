@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:UseDataKit/SDK.git",
-                "reference": "aa199056f98b8c0ca884f023f9847205b6aaa1fa"
+                "reference": "11728cedb539b92dc694c5174f0f9b8039825580"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/aa199056f98b8c0ca884f023f9847205b6aaa1fa",
-                "reference": "aa199056f98b8c0ca884f023f9847205b6aaa1fa",
+                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/11728cedb539b92dc694c5174f0f9b8039825580",
+                "reference": "11728cedb539b92dc694c5174f0f9b8039825580",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "source": "https://github.com/UseDataKit/SDK/tree/main",
                 "issues": "https://github.com/UseDataKit/SDK/issues"
             },
-            "time": "2024-08-08T15:50:43+00:00"
+            "time": "2024-08-13T12:42:30+00:00"
         }
     ],
     "packages-dev": [
@@ -245,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:gravityforms/gravityforms.git",
-                "reference": "3136cf740052f99872397d95930feadc53caf9dd"
+                "reference": "99f22f0277b43ef24c8dfc671ae3ff10f99e2103"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gravityforms/gravityforms/zipball/3136cf740052f99872397d95930feadc53caf9dd",
-                "reference": "3136cf740052f99872397d95930feadc53caf9dd",
+                "url": "https://api.github.com/repos/gravityforms/gravityforms/zipball/99f22f0277b43ef24c8dfc671ae3ff10f99e2103",
+                "reference": "99f22f0277b43ef24c8dfc671ae3ff10f99e2103",
                 "shasum": ""
             },
             "require-dev": {
@@ -278,9 +278,9 @@
             ],
             "support": {
                 "issues": "https://gravityforms.com",
-                "source": "https://github.com/gravityforms/gravityforms/tree/master"
+                "source": "https://github.com/gravityforms/gravityforms/tree/v2.8.16"
             },
-            "time": "2024-08-07T17:49:09+00:00"
+            "time": "2024-08-12T17:34:08+00:00"
         },
         {
             "name": "myclabs/deep-copy",
