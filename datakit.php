@@ -11,7 +11,7 @@
  * License URI:         http://www.gnu.org/licenses/gpl-2.0.html
  */
 
-use DataKit\DataViews\DataView\ArrayDataViewRepository;
+use DataKit\Plugin\DataView\WordPressDataViewRepository;
 use DataKit\Plugin\DataViewPlugin;
 
 /** If this file is called directly, abort. */
@@ -25,11 +25,16 @@ const DATAVIEW_PLUGIN_PATH = __FILE__;
 const DATAVIEW_VERSION     = '0.1.0';
 
 // Initialize the plugin.
-try {
-	DataViewPlugin::get_instance(
-		new ArrayDataViewRepository(),
-	);
-} catch ( Throwable $e ) {
-	// Todo: log errors somewhere.
-	return;
-}
+add_action(
+	'plugins_loaded',
+	function () {
+		try {
+			DataViewPlugin::get_instance(
+				new WordPressDataViewRepository(),
+			);
+		} catch ( Throwable $e ) {
+			// Todo: log errors somewhere.
+			return;
+		}
+	},
+);
