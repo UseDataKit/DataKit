@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:UseDataKit/SDK.git",
-                "reference": "11728cedb539b92dc694c5174f0f9b8039825580"
+                "reference": "0feaa26df04149bd23e18c7fae54d53f27751f1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/11728cedb539b92dc694c5174f0f9b8039825580",
-                "reference": "11728cedb539b92dc694c5174f0f9b8039825580",
+                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/0feaa26df04149bd23e18c7fae54d53f27751f1a",
+                "reference": "0feaa26df04149bd23e18c7fae54d53f27751f1a",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "source": "https://github.com/UseDataKit/SDK/tree/main",
                 "issues": "https://github.com/UseDataKit/SDK/issues"
             },
-            "time": "2024-08-13T12:42:30+00:00"
+            "time": "2024-08-14T13:18:47+00:00"
         }
     ],
     "packages-dev": [
