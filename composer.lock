@@ -245,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:gravityforms/gravityforms.git",
-                "reference": "99f22f0277b43ef24c8dfc671ae3ff10f99e2103"
+                "reference": "f3a58c39fb79f78dbd0f7e3d943d2e21206e8f70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gravityforms/gravityforms/zipball/99f22f0277b43ef24c8dfc671ae3ff10f99e2103",
-                "reference": "99f22f0277b43ef24c8dfc671ae3ff10f99e2103",
+                "url": "https://api.github.com/repos/gravityforms/gravityforms/zipball/f3a58c39fb79f78dbd0f7e3d943d2e21206e8f70",
+                "reference": "f3a58c39fb79f78dbd0f7e3d943d2e21206e8f70",
                 "shasum": ""
             },
             "require-dev": {
@@ -278,9 +278,9 @@
             ],
             "support": {
                 "issues": "https://gravityforms.com",
-                "source": "https://github.com/gravityforms/gravityforms/tree/v2.8.16"
+                "source": "https://github.com/gravityforms/gravityforms/tree/master"
             },
-            "time": "2024-08-12T17:34:08+00:00"
+            "time": "2024-08-14T07:58:25+00:00"
         },
         {
             "name": "myclabs/deep-copy",
