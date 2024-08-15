@@ -247,17 +247,9 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 		}
 
 		try {
-			$ws_form_submit          = new \WS_Form_Submit();
-			$ws_form_submit->form_id = $this->ws_form_submit_export->form_id;
-
-			// Get header key => value array.
-			$fields = $ws_form_submit->db_get_submit_fields(
+			$this->fields = $this->ws_form_submit_export->get_header(
 				true           // Bypass capabilities check.
 			);
-
-			foreach ( $fields as $key => $field ) {
-				$this->fields[ "field_{$key}" ] = $field['label'];
-			}
 		} catch ( Exception $e ) {
 			throw new DataNotFoundException( $this, esc_html( $e->getMessage() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
