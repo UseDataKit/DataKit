@@ -12,7 +12,7 @@
  */
 
 use DataKit\Plugin\DataView\WordPressDataViewRepository;
-use DataKit\Plugin\DataViewPlugin;
+use DataKit\Plugin\DataKitPlugin;
 
 /** If this file is called directly, abort. */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ add_action(
 	'init',
 	function () {
 		try {
-			DataViewPlugin::get_instance(
+			DataKitPlugin::get_instance(
 				new WordPressDataViewRepository(),
 			);
 		} catch ( Throwable $e ) {

@@ -13,7 +13,7 @@ use DataKit\Plugin\Component\DataViewShortcode;
  *
  * @since $ver$
  */
-final class DataViewPlugin {
+final class DataKitPlugin {
 	/**
 	 * The singleton plugin instance.
 	 *
