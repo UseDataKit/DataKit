@@ -11,6 +11,7 @@ phpcs.xml
 .phplint-cache
 *.zip
 *.tar.gz
+assets
 
 ## PhpStorm
 .idea/**/workspace.xml

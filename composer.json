@@ -53,6 +53,9 @@
 		"overtrue/phplint": "^3.4"
 	},
 	"scripts": {
+		"build": [
+			"rm -rf assets && cp -r ./vendor/datakit/sdk/assets assets"
+		],
 		"suite": [
 			"composer test",
 			"composer linter",
@@ -65,10 +68,12 @@
 		"format": "./vendor/bin/phpcbf --standard=phpcs.xml.dist --report-summary --report-source",
 		"linter": "./vendor/bin/phplint --no-progress --no-cache -v",
 		"post-install-cmd": [
-			"composer dump-autoload -o"
+			"composer dump-autoload -o",
+			"@build"
 		],
 		"post-update-cmd": [
-			"composer dump-autoload -o"
+			"composer dump-autoload -o",
+			"@build"
 		]
 	}
 }

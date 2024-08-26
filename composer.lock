@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/UseDataKit/SDK.git",
-                "reference": "5859e87ceef4609ee75ea344dd3fe46b03bf0885"
+                "reference": "443267e5881de25f4a772c8e8073448fb55cccfd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/5859e87ceef4609ee75ea344dd3fe46b03bf0885",
-                "reference": "5859e87ceef4609ee75ea344dd3fe46b03bf0885",
+                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/443267e5881de25f4a772c8e8073448fb55cccfd",
+                "reference": "443267e5881de25f4a772c8e8073448fb55cccfd",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "source": "https://github.com/UseDataKit/SDK/tree/main",
                 "issues": "https://github.com/UseDataKit/SDK/issues"
             },
-            "time": "2024-08-15T21:25:47+00:00"
+            "time": "2024-08-26T12:10:39+00:00"
         }
     ],
     "packages-dev": [
@@ -245,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:gravityforms/gravityforms.git",
-                "reference": "171890eab1f9f5e3ce3a9dd8584b43812b289a6a"
+                "reference": "4c7b8bb00ba96b441afb45c36103622a8c9c1cad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gravityforms/gravityforms/zipball/171890eab1f9f5e3ce3a9dd8584b43812b289a6a",
-                "reference": "171890eab1f9f5e3ce3a9dd8584b43812b289a6a",
+                "url": "https://api.github.com/repos/gravityforms/gravityforms/zipball/4c7b8bb00ba96b441afb45c36103622a8c9c1cad",
+                "reference": "4c7b8bb00ba96b441afb45c36103622a8c9c1cad",
                 "shasum": ""
             },
             "require-dev": {
@@ -280,7 +280,7 @@
                 "issues": "https://gravityforms.com",
                 "source": "https://github.com/gravityforms/gravityforms/tree/master"
             },
-            "time": "2024-08-14T14:56:30+00:00"
+            "time": "2024-08-20T17:03:30+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -997,16 +997,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.10",
+            "version": "1.11.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "640410b32995914bde3eed26fa89552f9c2c082f"
+                "reference": "707c2aed5d8d0075666e673a5e71440c1d01a5a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/640410b32995914bde3eed26fa89552f9c2c082f",
-                "reference": "640410b32995914bde3eed26fa89552f9c2c082f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/707c2aed5d8d0075666e673a5e71440c1d01a5a3",
+                "reference": "707c2aed5d8d0075666e673a5e71440c1d01a5a3",
                 "shasum": ""
             },
             "require": {
@@ -1051,7 +1051,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-08T09:02:50+00:00"
+            "time": "2024-08-19T14:37:29+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
