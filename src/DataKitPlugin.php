@@ -133,6 +133,8 @@ final class DataKitPlugin {
 	public static function get_instance( DataViewRepository $repository ): self {
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new self( $repository );
+
+			do_action( 'datakit/loaded' );
 		}
 
 		return self::$instance;
