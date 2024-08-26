@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-const DATAVIEW_PLUGIN_PATH = __FILE__;
-const DATAVIEW_VERSION     = '1.0.0';
+const DATAKIT_PLUGIN_FILE = __FILE__;
+const DATAKIT_VERSION     = '1.0.0';
 
 // Initialize the plugin.
 add_action(

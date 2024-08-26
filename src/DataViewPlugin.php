@@ -78,15 +78,15 @@ final class DataViewPlugin {
 	 * @since $ver$
 	 */
 	public function register_scripts(): void {
-		$assets_dir = plugin_dir_url( DATAVIEW_PLUGIN_PATH );
+		$assets_dir = plugin_dir_url( DATAKIT_PLUGIN_FILE );
 
-		wp_register_script( 'datakit/dataview', $assets_dir . 'assets/js/dataview.js', [], DATAVIEW_VERSION, true );
+		wp_register_script( 'datakit/dataview', $assets_dir . 'assets/js/dataview.js', [], DATAKIT_VERSION, true );
 
 		wp_register_style(
 			'datakit/dataview',
 			$assets_dir . 'assets/css/dataview.css',
 			[ 'dashicons' ],
-			DATAVIEW_VERSION,
+			DATAKIT_VERSION,
 		);
 
 		$fetch_options = [
