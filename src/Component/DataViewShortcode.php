@@ -2,6 +2,8 @@
 
 namespace DataKit\Plugin\Component;
 
+use DataKit\DataViews\AccessControl\AccessController;
+use DataKit\DataViews\AccessControl\Capability;
 use DataKit\DataViews\DataView\DataViewRepository;
 use DataKit\DataViews\DataViewException;
 use DataKit\Plugin\Rest\Router;
@@ -49,12 +51,22 @@ final class DataViewShortcode {
 	private array $rendered = [];
 
 	/**
+	 * The Access Controller.
+	 *
+	 * @since $ver$
+	 *
+	 * @var AccessController
+	 */
+	private AccessController $access_controller;
+
+	/**
 	 * Creates the shortcode instance.
 	 *
 	 * @since $ver$
 	 */
-	private function __construct( DataViewRepository $data_view_repository ) {
+	private function __construct( DataViewRepository $data_view_repository, AccessController $access_controller ) {
 		$this->data_view_repository = $data_view_repository;
+		$this->access_controller    = $access_controller;
 
 		add_shortcode( self::SHORTCODE, [ $this, 'render_shortcode' ] );
 	}
@@ -81,13 +93,17 @@ final class DataViewShortcode {
 
 		// Only add data set once per ID.
 		if ( ! in_array( $id, $this->rendered, true ) ) {
-			wp_enqueue_script( 'datakit/dataview' );
-			wp_enqueue_style( 'datakit/dataview' );
-
 			try {
 				$dataview = $this->data_view_repository->get( $id );
-				$js       = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
-				$js       = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
+				if ( ! $this->access_controller->can( new Capability\ViewDataView( $dataview ) ) ) {
+					return '';
+				}
+
+				wp_enqueue_script( 'datakit/dataview' );
+				wp_enqueue_style( 'datakit/dataview' );
+
+				$js = sprintf( 'datakit_dataviews["%s"] = %s;', esc_attr( $id ), $dataview->to_js() );
+				$js = str_replace( '{REST_ENDPOINT}', Router::get_url(), $js );
 			} catch ( DataViewException $e ) {
 				return '';
 			}
@@ -119,9 +135,12 @@ final class DataViewShortcode {
 	 *
 	 * @return self The singleton.
 	 */
-	public static function get_instance( DataViewRepository $data_view_repository ): self {
+	public static function get_instance(
+		DataViewRepository $data_view_repository,
+		AccessController $access_controller
+	): self {
 		if ( ! isset( self::$instance ) ) {
-			self::$instance = new self( $data_view_repository );
+			self::$instance = new self( $data_view_repository, $access_controller );
 		}
 
 		return self::$instance;

@@ -2,9 +2,11 @@
 
 namespace DataKit\Plugin;
 
+use DataKit\DataViews\AccessControl\AccessControlManager;
 use DataKit\DataViews\DataView\DataView;
 use DataKit\DataViews\DataView\DataViewRepository;
 use DataKit\DataViews\DataView\Pagination;
+use DataKit\Plugin\AccessControl\WordPressAccessController;
 use DataKit\Plugin\Rest\Router;
 use DataKit\Plugin\Component\DataViewShortcode;
 
@@ -41,8 +43,12 @@ final class DataKitPlugin {
 	 */
 	private function __construct( DataViewRepository $data_view_repository ) {
 		$this->data_view_repository = $data_view_repository;
+
+		do_action( 'datakit/loading' );
+
+		AccessControlManager::set( new WordPressAccessController( wp_get_current_user() ) );
 		Router::get_instance( $this->data_view_repository );
-		DataViewShortcode::get_instance( $this->data_view_repository );
+		DataViewShortcode::get_instance( $this->data_view_repository, AccessControlManager::current() );
 
 		/**
 		 * Modifies the default amount of results per page.
@@ -59,6 +65,8 @@ final class DataKitPlugin {
 		add_action( 'datakit/dataview/register', [ $this, 'register_data_view' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ] );
+
+		do_action( 'datakit/loaded' );
 	}
 
 	/**
@@ -133,8 +141,6 @@ final class DataKitPlugin {
 	public static function get_instance( DataViewRepository $repository ): self {
 		if ( ! isset( self::$instance ) ) {
 			self::$instance = new self( $repository );
-
-			do_action( 'datakit/loaded' );
 		}
 
 		return self::$instance;

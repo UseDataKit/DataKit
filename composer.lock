@@ -4,21 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8528064048016873b62d9c97f6209903",
+    "content-hash": "aa356fe82fb7173c6dada711618e231f",
     "packages": [
         {
             "name": "datakit/sdk",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/UseDataKit/SDK.git",
-                "reference": "27fea2c3cbce26370bf842a62a4ae7b26b15df49"
-            },
+            "version": "dev-feature/acl",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/27fea2c3cbce26370bf842a62a4ae7b26b15df49",
-                "reference": "27fea2c3cbce26370bf842a62a4ae7b26b15df49",
-                "shasum": ""
+                "type": "path",
+                "url": "../DataKit-sdk",
+                "reference": "7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc"
             },
             "require": {
                 "ext-json": "*",
@@ -35,7 +29,6 @@
             "suggest": {
                 "ext-pdo": "PDO is required to use the SQLite cache provider"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -86,11 +79,9 @@
                 }
             ],
             "description": "Easily create your own DataViews components with just PHP.",
-            "support": {
-                "source": "https://github.com/UseDataKit/SDK/tree/main",
-                "issues": "https://github.com/UseDataKit/SDK/issues"
-            },
-            "time": "2024-09-11T11:33:34+00:00"
+            "transport-options": {
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
@@ -1498,6 +1489,76 @@
                 "source": "https://github.com/php-fig/container/tree/1.1.2"
             },
             "time": "2021-11-05T16:50:12+00:00"
+        },
+        {
+            "name": "roots/wordpress-no-content",
+            "version": "6.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WordPress/WordPress.git",
+                "reference": "6.6.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/release/wordpress-6.6.2-no-content.zip",
+                "shasum": "b496b8a9bb3c6d20a781344cbe3e189f7fd83871"
+            },
+            "require": {
+                "php": ">= 7.2.24"
+            },
+            "provide": {
+                "wordpress/core-implementation": "6.6.2"
+            },
+            "suggest": {
+                "ext-curl": "Performs remote request operations.",
+                "ext-dom": "Used to validate Text Widget content and to automatically configuring IIS7+.",
+                "ext-exif": "Works with metadata stored in images.",
+                "ext-fileinfo": "Used to detect mimetype of file uploads.",
+                "ext-hash": "Used for hashing, including passwords and update packages.",
+                "ext-imagick": "Provides better image quality for media uploads.",
+                "ext-json": "Used for communications with other servers.",
+                "ext-libsodium": "Validates Signatures and provides securely random bytes.",
+                "ext-mbstring": "Used to properly handle UTF8 text.",
+                "ext-mysqli": "Connects to MySQL for database interactions.",
+                "ext-openssl": "Permits SSL-based connections to other hosts.",
+                "ext-pcre": "Increases performance of pattern matching in code searches.",
+                "ext-xml": "Used for XML parsing, such as from a third-party site.",
+                "ext-zip": "Used for decompressing Plugins, Themes, and WordPress update packages."
+            },
+            "type": "wordpress-core",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "WordPress Community",
+                    "homepage": "https://wordpress.org/about/"
+                }
+            ],
+            "description": "WordPress is open source software you can use to create a beautiful website, blog, or app.",
+            "homepage": "https://wordpress.org/",
+            "keywords": [
+                "blog",
+                "cms",
+                "wordpress"
+            ],
+            "support": {
+                "docs": "https://developer.wordpress.org/",
+                "forum": "https://wordpress.org/support/",
+                "irc": "irc://irc.freenode.net/wordpress",
+                "issues": "https://core.trac.wordpress.org/",
+                "rss": "https://wordpress.org/news/feed/",
+                "source": "https://core.trac.wordpress.org/browser",
+                "wiki": "https://codex.wordpress.org/"
+            },
+            "funding": [
+                {
+                    "url": "https://wordpressfoundation.org/donate/",
+                    "type": "other"
+                }
+            ],
+            "time": "2024-09-10T15:25:31+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

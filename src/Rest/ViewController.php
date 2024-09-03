@@ -2,9 +2,12 @@
 
 namespace DataKit\Plugin\Rest;
 
+use DataKit\DataViews\AccessControl\AccessController;
+use DataKit\DataViews\AccessControl\Capability;
 use DataKit\DataViews\Data\Exception\DataNotFoundException;
 use DataKit\DataViews\DataView\DataItem;
 use DataKit\DataViews\DataView\DataView;
+use DataKit\DataViews\DataView\DataViewNotFoundException;
 use DataKit\DataViews\DataView\DataViewRepository;
 use DataKit\DataViews\DataView\Filters;
 use DataKit\DataViews\DataView\Pagination;
@@ -31,6 +34,15 @@ final class ViewController {
 	private DataViewRepository $dataview_repository;
 
 	/**
+	 * The Access Controller.
+	 *
+	 * @since $ver$
+	 *
+	 * @var AccessController
+	 */
+	private AccessController $access_controller;
+
+	/**
 	 * The translator.
 	 *
 	 * @since $ver$
@@ -46,8 +58,13 @@ final class ViewController {
 	 *
 	 * @param DataViewRepository $dataview_repository The DataView repository.
 	 */
-	public function __construct( DataViewRepository $dataview_repository, WordPressTranslator $translator ) {
+	public function __construct(
+		DataViewRepository $dataview_repository,
+		AccessController $access_controller,
+		WordPressTranslator $translator
+	) {
 		$this->dataview_repository = $dataview_repository;
+		$this->access_controller   = $access_controller;
 		$this->translator          = $translator;
 	}
 
@@ -59,12 +76,20 @@ final class ViewController {
 	 * @param WP_REST_Request $request The request object.
 	 *
 	 * @return bool Whether the current user can view the result.
-	 * @todo  Add security from DataView.
 	 */
 	public function can_view( WP_REST_Request $request ): bool {
 		$view_id = (string) ( $request->get_param( 'view_id' ) ?? '' );
+		if ( ! $this->dataview_repository->has( $view_id ) ) {
+			return false;
+		}
 
-		return true;
+		try {
+			$dataview = $this->dataview_repository->get( $view_id );
+
+			return $this->access_controller->can( new Capability\ViewDataView( $dataview ) );
+		} catch ( DataViewNotFoundException $e ) {
+			return false;
+		}
 	}
 
 	/**

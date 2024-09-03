@@ -2,6 +2,7 @@
 
 namespace DataKit\Plugin\Rest;
 
+use DataKit\DataViews\AccessControl\AccessControlManager;
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\DataView\DataViewRepository;
 use DataKit\DataViews\Translation\Translatable;
@@ -69,10 +70,13 @@ final class Router {
 	private function __construct( DataViewRepository $data_view_repository ) {
 		$this->data_view_repository = $data_view_repository;
 		$this->translator           = new WordPressTranslator();
-		$this->view_controller      = new ViewController( $data_view_repository, $this->translator );
+		$this->view_controller      = new ViewController(
+			$data_view_repository,
+			AccessControlManager::current(),
+			$this->translator,
+		);
 
-		// @phpstan-ignore return.missing
-		add_filter( 'rest_api_init', [ $this, 'register_routes' ] );
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
 	/**
