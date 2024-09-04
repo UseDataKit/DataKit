@@ -4,6 +4,8 @@ namespace DataKit\Plugin\Rest;
 
 use DataKit\DataViews\Data\MutableDataSource;
 use DataKit\DataViews\DataView\DataViewRepository;
+use DataKit\DataViews\Translation\Translatable;
+use DataKit\Plugin\Translation\WordPressTranslator;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Server;
@@ -51,18 +53,27 @@ final class Router {
 	private ViewController $view_controller;
 
 	/**
+	 * The translator.
+	 *
+	 * @since $ver$
+	 *
+	 * @var WordPressTranslator
+	 */
+	private WordPressTranslator $translator;
+
+	/**
 	 * Creates the router.
 	 *
 	 * @since $ver$
 	 */
 	private function __construct( DataViewRepository $data_view_repository ) {
 		$this->data_view_repository = $data_view_repository;
-		$this->view_controller      = new ViewController( $data_view_repository );
+		$this->translator           = new WordPressTranslator();
+		$this->view_controller      = new ViewController( $data_view_repository, $this->translator );
 
 		// @phpstan-ignore return.missing
 		add_filter( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
-
 
 	/**
 	 * Returns a prefixed URL.
@@ -200,7 +211,9 @@ final class Router {
 
 			return [ 'id' => $data_ids ];
 		} catch ( \Exception $e ) {
-			return new WP_Error( $e->getCode(), $e->getMessage() );
+			$message = $e instanceof Translatable ? $e->translate( $this->translator ) : $e->getMessage();
+
+			return new WP_Error( $e->getCode(), $message );
 		}
 	}
 
