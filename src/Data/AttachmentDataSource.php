@@ -40,7 +40,7 @@ final class AttachmentDataSource {
 		$path = get_attached_file( $attachment_id );
 		if ( ! $path ) {
 			// translators: %d is the attachment ID.
-			throw new DataSourceNotFoundException( sprintf( esc_html__( 'The attachment ID (%d) is not found.', 'dk-datakit' ), $attachment_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new DataSourceNotFoundException( sprintf( esc_html__( 'The attachment ID (%d) is not found.', 'datakit' ), $attachment_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return new CsvDataSource( $path, $separator, $enclosure, $escape );
