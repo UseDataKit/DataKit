@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/UseDataKit/SDK.git",
-                "reference": "e0e461118cabbf1323dc8608fd6938ba43d396dc"
+                "reference": "cf1204afd8a4b43f5a561c220ba892e39427033a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/e0e461118cabbf1323dc8608fd6938ba43d396dc",
-                "reference": "e0e461118cabbf1323dc8608fd6938ba43d396dc",
+                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/cf1204afd8a4b43f5a561c220ba892e39427033a",
+                "reference": "cf1204afd8a4b43f5a561c220ba892e39427033a",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
                 "source": "https://github.com/UseDataKit/SDK/tree/feature/translator",
                 "issues": "https://github.com/UseDataKit/SDK/issues"
             },
-            "time": "2024-09-04T18:39:56+00:00"
+            "time": "2024-09-05T07:26:24+00:00"
         }
     ],
     "packages-dev": [
