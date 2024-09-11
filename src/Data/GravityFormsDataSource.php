@@ -66,13 +66,13 @@ final class GravityFormsDataSource extends BaseDataSource implements MutableData
 	 */
 	public function __construct( int $form_id ) {
 		if ( ! class_exists( 'GFAPI' ) ) {
-			throw new DataSourceNotFoundException( esc_html__( 'Data source can not be used, as Gravity Forms is not available.', 'dk-datakit' ) );
+			throw new DataSourceNotFoundException( esc_html__( 'Data source can not be used, as Gravity Forms is not available.', 'datakit' ) );
 		}
 
 		$form = GFAPI::get_form( $form_id );
 		if ( ! is_array( $form ) ) {
 			// translators: %d is the form ID.
-			throw new DataSourceNotFoundException( sprintf( esc_html__( 'Gravity Forms data source (%d) not found', 'dk-datakit' ), $form_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new DataSourceNotFoundException( sprintf( esc_html__( 'Gravity Forms data source (%d) not found', 'datakit' ), $form_id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		require_once \GFCommon::get_base_path() . '/export.php';

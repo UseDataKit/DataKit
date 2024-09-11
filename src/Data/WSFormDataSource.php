@@ -61,7 +61,7 @@ final class WSFormDataSource extends BaseDataSource implements MutableDataSource
 			$this->ws_form_submit_export = new \WS_Form_Submit_Export( $form_id );
 		} catch ( Exception $e ) {
 			// translators: %d is the form ID.
-			throw new DataSourceNotFoundException( sprintf( esc_html__( 'WS Form data source (%d) not found', 'dk-datakit' ), $form_id ) );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new DataSourceNotFoundException( sprintf( esc_html__( 'WS Form data source (%d) not found', 'datakit' ), $form_id ) );  // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
