@@ -10,6 +10,8 @@ use DataKit\DataViews\DataView\Filters;
 use DataKit\DataViews\DataView\Pagination;
 use DataKit\DataViews\DataView\Search;
 use DataKit\DataViews\DataView\Sort;
+use DataKit\DataViews\Translation\Translatable;
+use DataKit\Plugin\Translation\WordPressTranslator;
 use WP_Error;
 use WP_REST_Request;
 
@@ -29,14 +31,24 @@ final class ViewController {
 	private DataViewRepository $dataview_repository;
 
 	/**
+	 * The translator.
+	 *
+	 * @since $ver$
+	 *
+	 * @var WordPressTranslator
+	 */
+	private WordPressTranslator $translator;
+
+	/**
 	 * Creates the controller.
 	 *
 	 * @since $ver$
 	 *
 	 * @param DataViewRepository $dataview_repository The DataView repository.
 	 */
-	public function __construct( DataViewRepository $dataview_repository ) {
+	public function __construct( DataViewRepository $dataview_repository, WordPressTranslator $translator ) {
 		$this->dataview_repository = $dataview_repository;
+		$this->translator          = $translator;
 	}
 
 	/**
@@ -54,7 +66,6 @@ final class ViewController {
 
 		return true;
 	}
-
 
 	/**
 	 * Returns the DataView data.
@@ -86,7 +97,9 @@ final class ViewController {
 				'paginationInfo' => $pagination->info( $data_source ),
 			];
 		} catch ( \Exception $e ) {
-			return new WP_Error( 'datakit_dataview_get_view', $e->getMessage() );
+			$message = $e instanceof Translatable ? $e->translate( $this->translator ) : $e->getMessage();
+
+			return new WP_Error( 'datakit_dataview_get_view', $message );
 		}
 	}
 
@@ -112,7 +125,9 @@ final class ViewController {
 				$data['status'] = 404;
 			}
 
-			return new WP_Error( 'datakit_dataview_get_item', $e->getMessage(), $data );
+			$message = $e instanceof Translatable ? $e->translate( $this->translator ) : $e->getMessage();
+
+			return new WP_Error( 'datakit_dataview_get_item', $message, $data );
 		}
 
 		ob_start();

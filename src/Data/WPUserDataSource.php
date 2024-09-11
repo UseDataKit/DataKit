@@ -194,7 +194,7 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 			if ( get_current_user_id() === (int) $id ) {
 				throw new ActionForbiddenException(
 					$this, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-					esc_html__( 'You cannot delete your own user.', 'dk-datakit' ),
+					esc_html__( 'You cannot delete your own user.', 'datakit' ),
 				);
 			}
 
