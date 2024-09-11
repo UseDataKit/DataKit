@@ -9,10 +9,16 @@
         {
             "name": "datakit/sdk",
             "version": "dev-feature/acl",
-            "dist": {
-                "type": "path",
-                "url": "../DataKit-sdk",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/UseDataKit/SDK.git",
                 "reference": "7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc",
+                "reference": "7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc",
+                "shasum": ""
             },
             "require": {
                 "ext-json": "*",
@@ -79,9 +85,11 @@
                 }
             ],
             "description": "Easily create your own DataViews components with just PHP.",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/UseDataKit/SDK/tree/feature/acl",
+                "issues": "https://github.com/UseDataKit/SDK/issues"
+            },
+            "time": "2024-09-16T09:02:28+00:00"
         }
     ],
     "packages-dev": [
