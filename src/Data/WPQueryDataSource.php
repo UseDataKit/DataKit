@@ -15,28 +15,30 @@ use DataKit\DataViews\Data\Exception\ActionForbiddenException;
  * @since $ver$
  */
 final class WPQueryDataSource extends BaseDataSource implements MutableDataSource {
-
 	/**
 	 * The base WP_Query instance that queries will use as a starting point (except for count queries).
 	 *
-	 * @var \WP_Query
 	 * @since $ver$
+	 *
+	 * @var \WP_Query
 	 */
 	private \WP_Query $base_query;
 
 	/**
 	 * Stores the query arguments for later execution.
 	 *
-	 * @var array
 	 * @since $ver$
+	 *
+	 * @var array
 	 */
 	private array $query_args = [];
 
 	/**
 	 * Default query arguments.
 	 *
-	 * @var array
 	 * @since $ver$
+	 *
+	 * @var array
 	 */
 	private array $default_args = [
 		'post_type'           => 'any',
@@ -61,6 +63,8 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 	/**
 	 * Stores the query arguments instead of immediately executing them.
 	 *
+	 * @since $ver$
+	 *
 	 * @param \WP_Query|string|array|null $query Optional query parameter.
 	 */
 	private function store_query_args( $query ): void {
@@ -81,8 +85,6 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 	 * Sanitize and set security-related query arguments.
 	 *
 	 * @since $ver$
-	 *
-	 * @return void
 	 */
 	private function sanitize_query_args(): void {
 		// Ensure 'suppress_filters' is always false for security.
@@ -117,7 +119,7 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 	 *
 	 * @since $ver$
 	 *
-	 * @param int $limit The number of posts to retrieve.
+	 * @param int $limit  The number of posts to retrieve.
 	 * @param int $offset The number of posts to skip.
 	 *
 	 * @return string[] Array of post IDs.
@@ -127,7 +129,7 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 			$this->query_args,
 			[
 				'fields'         => 'ids',
-				's'              => (string) $this->search,
+				's'              => $this->get_search_string(),
 				'posts_per_page' => $limit,
 				'offset'         => $offset,
 			],
@@ -137,6 +139,17 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 		$this->base_query->query( $query_args );
 
 		return array_map( 'strval', $this->base_query->posts );
+	}
+
+	/**
+	 * Returns the search string.
+	 *
+	 * @since $ver$
+	 *
+	 * @return string
+	 */
+	private function get_search_string(): string {
+		return trim( ( $this->query_args['s'] ?? '' ) . ' ' . $this->search );
 	}
 
 	/**
@@ -169,11 +182,11 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 *
 	 * @since $ver$
 	 *
-	 * @return array
+	 * @return array The provided data.
 	 *
 	 * @throws DataNotFoundException If the post does not exist.
 	 * @throws ActionForbiddenException If the user doesn't have permission to read the post.
@@ -190,7 +203,7 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 			throw new ActionForbiddenException(
 				$this,
 				// translators: %d is the post ID.
-				sprintf( esc_html__( 'You do not have permission to read post #%d.', 'dk-datakit' ), $post->ID )
+				sprintf( esc_html__( 'You do not have permission to read post #%d.', 'datakit' ), $post->ID )
 			);
 		}
 
@@ -234,7 +247,7 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 				[
 					'fields'        => 'ids',
 					'no_found_rows' => false,
-					's'             => (string) $this->search,
+					's'             => $this->get_search_string(),
 				]
 			)
 		);
@@ -256,8 +269,6 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 	 *
 	 * @since $ver$
 	 *
-	 * @return void
-	 *
 	 * @throws DataNotFoundException If the post does not exist before deletion.
 	 * @throws ActionForbiddenException If the user doesn't have permission to delete the post.
 	 */
@@ -273,7 +284,7 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 				throw new ActionForbiddenException(
 					$this,
 					// translators: %d is the post ID.
-					sprintf( esc_html__( 'You do not have permission to delete post #%d.', 'dk-datakit' ), $post->ID )
+					sprintf( esc_html__( 'You do not have permission to delete post #%d.', 'datakit' ), $post->ID )
 				);
 			}
 
@@ -288,25 +299,25 @@ final class WPQueryDataSource extends BaseDataSource implements MutableDataSourc
 	 */
 	public function get_fields(): array {
 		return [
-			'ID'             => __( 'ID', 'dk-datakit' ),
-			'post_author'    => __( 'Author', 'dk-datakit' ),
-			'post_date'      => __( 'Date', 'dk-datakit' ),
-			'post_content'   => __( 'Content', 'dk-datakit' ),
-			'post_title'     => __( 'Title', 'dk-datakit' ),
-			'post_excerpt'   => __( 'Excerpt', 'dk-datakit' ),
-			'post_status'    => __( 'Status', 'dk-datakit' ),
-			'comment_status' => __( 'Comment Status', 'dk-datakit' ),
-			'ping_status'    => __( 'Ping Status', 'dk-datakit' ),
-			'post_password'  => __( 'Password', 'dk-datakit' ),
-			'post_name'      => __( 'Slug', 'dk-datakit' ),
-			'post_modified'  => __( 'Modified Date', 'dk-datakit' ),
-			'post_parent'    => __( 'Parent', 'dk-datakit' ),
-			'guid'           => __( 'GUID', 'dk-datakit' ),
-			'menu_order'     => __( 'Menu Order', 'dk-datakit' ),
-			'post_type'      => __( 'Post Type', 'dk-datakit' ),
-			'post_mime_type' => __( 'MIME Type', 'dk-datakit' ),
-			'comment_count'  => __( 'Comment Count', 'dk-datakit' ),
-			'permalink'      => __( 'Permalink', 'dk-datakit' ),
+			'ID'             => __( 'ID', 'datakit' ),
+			'post_author'    => __( 'Author', 'datakit' ),
+			'post_date'      => __( 'Date', 'datakit' ),
+			'post_content'   => __( 'Content', 'datakit' ),
+			'post_title'     => __( 'Title', 'datakit' ),
+			'post_excerpt'   => __( 'Excerpt', 'datakit' ),
+			'post_status'    => __( 'Status', 'datakit' ),
+			'comment_status' => __( 'Comment Status', 'datakit' ),
+			'ping_status'    => __( 'Ping Status', 'datakit' ),
+			'post_password'  => __( 'Password', 'datakit' ),
+			'post_name'      => __( 'Slug', 'datakit' ),
+			'post_modified'  => __( 'Modified Date', 'datakit' ),
+			'post_parent'    => __( 'Parent', 'datakit' ),
+			'guid'           => __( 'GUID', 'datakit' ),
+			'menu_order'     => __( 'Menu Order', 'datakit' ),
+			'post_type'      => __( 'Post Type', 'datakit' ),
+			'post_mime_type' => __( 'MIME Type', 'datakit' ),
+			'comment_count'  => __( 'Comment Count', 'datakit' ),
+			'permalink'      => __( 'Permalink', 'datakit' ),
 		];
 	}
 }
