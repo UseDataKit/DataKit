@@ -80,6 +80,6 @@ final class WordPressAccessController implements AccessController {
 		 * @param Capability $capability Whether the user can.
 		 * @param ?WP_User   $user       The WP_User.
 		 */
-		return (bool) apply_filters( 'datakit/acl/can', $can, $capability, $this->user );
+		return (bool) apply_filters( 'datakit/access-control/can', $can, $capability, $this->user );
 	}
 }
