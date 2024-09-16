@@ -1,0 +1,5 @@
+<?php
+
+function __( string $message, string $domain = '' ): string {
+	return '';
+}

@@ -8,3 +8,15 @@ if ( ! function_exists( 'apply_filters' ) ) {
 		return $args[1];
 	}
 }
+
+if ( ! function_exists( '_x' ) ) {
+	function _x( ...$args ) {
+		return $args[0];
+	}
+}
+
+if ( ! function_exists( '__' ) ) {
+	function __( ...$args ) {
+		return $args[0];
+	}
+}
