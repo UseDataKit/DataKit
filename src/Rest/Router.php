@@ -105,7 +105,7 @@ final class Router {
 	public function register_routes(): void {
 		register_rest_route(
 			self::NAMESPACE,
-			'/views/(?<id>[^/]+)$',
+			'/views/(?<view_id>[^/]+)$',
 			[
 				[
 					'methods'             => WP_REST_Server::READABLE,

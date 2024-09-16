@@ -103,7 +103,7 @@ final class ViewController {
 	 */
 	public function get_view( WP_REST_Request $request ) {
 		try {
-			$data_view = $this->dataview_repository->get( $request->get_param( 'id' ) );
+			$data_view = $this->dataview_repository->get( $request->get_param( 'view_id' ) );
 			$params    = $request->get_params();
 
 			// Update view with provided params.
