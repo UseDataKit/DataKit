@@ -208,6 +208,18 @@ final class WPUserDataSource extends BaseDataSource implements MutableDataSource
 	 * @since $ver$
 	 */
 	public function get_fields(): array {
-		return []; // Not yet implemented.
+		return [
+			'ID'              => __( 'User ID', 'datakit' ),
+			'user_login'      => __( 'User Login Name', 'datakit' ),
+			'user_nicename'   => __( 'User Nice Name', 'datakit' ),
+			'user_email'      => __( 'User Email', 'datakit' ),
+			'user_url'        => __( 'User URL', 'datakit' ),
+			'user_registered' => __( 'User Registration Date', 'datakit' ),
+			'display_name'    => __( 'User Display Name', 'datakit' ),
+			'nickname'        => __( 'User Nickname', 'datakit' ),
+			'first_name'      => __( 'User First Name', 'datakit' ),
+			'last_name'       => __( 'User Last Name', 'datakit' ),
+			'description'     => __( 'User Description', 'datakit' ),
+		];
 	}
 }
