@@ -72,7 +72,7 @@ final class WordPressAccessController implements AccessController {
 		/**
 		 * Modifies the capability check.
 		 *
-		 * @filter `datakit/acl/can`
+		 * @filter `datakit/access-control/can`
 		 *
 		 * @since  $ver$
 		 *
