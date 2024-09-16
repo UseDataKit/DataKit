@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa356fe82fb7173c6dada711618e231f",
+    "content-hash": "c2b3105098b6e486ef25a00d3cb5cf75",
     "packages": [
         {
             "name": "datakit/sdk",
-            "version": "dev-feature/acl",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/UseDataKit/SDK.git",
-                "reference": "7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc"
+                "reference": "dc89bc13b1e6a54377709f8397f3b9b1926123cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc",
-                "reference": "7e64e725bfdaa31603f29dbe3c1edd3bb1f77abc",
+                "url": "https://api.github.com/repos/UseDataKit/SDK/zipball/dc89bc13b1e6a54377709f8397f3b9b1926123cb",
+                "reference": "dc89bc13b1e6a54377709f8397f3b9b1926123cb",
                 "shasum": ""
             },
             "require": {
@@ -35,6 +35,7 @@
             "suggest": {
                 "ext-pdo": "PDO is required to use the SQLite cache provider"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -86,10 +87,10 @@
             ],
             "description": "Easily create your own DataViews components with just PHP.",
             "support": {
-                "source": "https://github.com/UseDataKit/SDK/tree/feature/acl",
+                "source": "https://github.com/UseDataKit/SDK/tree/main",
                 "issues": "https://github.com/UseDataKit/SDK/issues"
             },
-            "time": "2024-09-16T09:02:28+00:00"
+            "time": "2024-09-16T09:56:21+00:00"
         }
     ],
     "packages-dev": [
