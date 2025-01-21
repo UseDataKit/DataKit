@@ -163,6 +163,7 @@ jobs:
           define('FS__API_DEV_ID', getenv('FREEMIUS_DEV_ID'));
           define('FS__API_PUBLIC_KEY', getenv('FREEMIUS_PUBLIC_KEY'));
           define('FS__API_SECRET_KEY', getenv('FREEMIUS_SECRET_KEY'));
+          \$plugin_id = getenv('FREEMIUS_PLUGIN_ID');
           
           try {
               // Init SDK
@@ -176,7 +177,6 @@ jobs:
               echo \"Deploying version: \$version\\n\";
           
               // Deploy new version
-              \$plugin_id = getenv('FREEMIUS_PLUGIN_ID');
               \$result = \$api->Api(\"plugins/\$plugin_id/tags.json\", 'POST', 
                   array(
                       'add_contributor' => true,
