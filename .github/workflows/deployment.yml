@@ -109,7 +109,7 @@ jobs:
           
           # Verify key files exist in the ZIP
           echo "Verifying key files..."
-          if ! unzip -l build/my-plugin.zip | grep -q "plugin-main-file.php"; then
+          if ! unzip -l build/datakit.zip | grep -q "datakit.php"; then
             echo "Error: Main plugin file not found in ZIP"
             exit 1
           fi
