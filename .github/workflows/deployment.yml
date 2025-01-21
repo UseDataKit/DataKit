@@ -115,6 +115,30 @@ jobs:
             echo "Error: Main plugin file not found in ZIP"
             exit 1
           fi
+          
+          # Check src directory exists and has contents
+          if ! unzip -l build/datakit.zip | grep -q "^.*src/"; then
+            echo "Error: src directory not found in ZIP"
+            exit 1
+          fi
+          
+          # Check src directory has contents (should show more than just the directory entry)
+          if [ $(unzip -l build/datakit.zip | grep "src/" | wc -l) -le 1 ]; then
+            echo "Error: src directory is empty"
+            exit 1
+          fi
+          
+          # Check Freemius directory exists and has contents
+          if ! unzip -l build/datakit.zip | grep -q "^.*freemius/"; then
+            echo "Error: freemius directory not found in ZIP"
+            exit 1
+          fi
+          
+          # Check Freemius directory has contents (should show more than just the directory entry)
+          if [ $(unzip -l build/datakit.zip | grep "freemius/" | wc -l) -le 1 ]; then
+            echo "Error: Freemius directory is empty"
+            exit 1
+          fi
 
       # Step 10: Download Freemius PHP SDK
       - name: Download Freemius PHP SDK
