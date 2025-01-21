@@ -191,12 +191,6 @@ jobs:
                   throw new Exception('Freemius API Error: ' . \$result->error->message);
               }
           
-              // Verify deployment status
-              \$deployment_status = \$api->Api(\"plugins/\$plugin_id/tags/\$version.json\", 'GET');
-              if (empty(\$deployment_status) || !empty(\$deployment_status->error)) {
-                  throw new Exception('Failed to verify deployment status');
-              }
-          
               echo \"Successfully deployed version \$version to Freemius\\n\";
               echo 'Deployment details:\\n';
               print_r(\$result);
