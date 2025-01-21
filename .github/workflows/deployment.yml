@@ -145,7 +145,7 @@ jobs:
         run: |
           curl -L https://github.com/Freemius/php-sdk/archive/refs/heads/master.zip -o freemius-sdk.zip
           unzip freemius-sdk.zip
-          mv php-sdk-master php-sdk
+          mv freemius-php-sdk-master php-sdk
 
       # Step 11: Deploy to Freemius
       - name: Deploy to Freemius
