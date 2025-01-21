@@ -1,0 +1,199 @@
+name: Build and Deploy to Freemius
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g. v1.0.0)'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  PHP_VERSION: '8.0'
+  COMPOSER_NO_INTERACTION: '1'
+  COMPOSER_CACHE_DIR: ~/.composer/cache
+
+concurrency:
+  group: freemius-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Plugin to Freemius
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    timeout-minutes: 15
+
+    steps:
+      # Step 1: Validate Freemius Credentials
+      - name: Validate Freemius Credentials
+        run: |
+          if [ -z "${{ secrets.FREEMIUS_DEV_ID }}" ] || \
+             [ -z "${{ secrets.FREEMIUS_PUBLIC_KEY }}" ] || \
+             [ -z "${{ secrets.FREEMIUS_SECRET_KEY }}" ] || \
+             [ -z "${{ secrets.FREEMIUS_PLUGIN_ID }}" ]; then
+            echo "Error: Missing required Freemius credentials"
+            exit 1
+          fi
+
+      # Step 2: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Step 4: Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: zip, curl, mbstring
+          tools: composer
+          coverage: none
+
+      # Step 5: Cache Composer dependencies
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      # Step 6: Check for Composer Dependencies
+      - name: Check for Composer
+        id: check_composer
+        run: |
+          if [ -f "composer.json" ]; then
+            echo "has_composer=true" >> $GITHUB_OUTPUT
+          fi
+
+      # Step 7: Validate composer.json
+      - name: Validate composer.json
+        if: steps.check_composer.outputs.has_composer == 'true'
+        run: composer validate --strict
+
+      # Step 8: Install Dependencies
+      - name: Install Dependencies
+        if: steps.check_composer.outputs.has_composer == 'true'
+        run: |
+          composer install --no-dev --optimize-autoloader
+          composer dump-autoload --optimize --no-dev
+
+      # Step 8: Build the ZIP File
+      - name: Build Plugin ZIP
+        run: |
+          # Create a clean export using git archive
+          mkdir -p build
+          git archive HEAD --format=zip -o build/my-plugin.zip
+
+      # Step 9: Validate ZIP
+      - name: Validate ZIP
+        run: |
+          if [ ! -f build/my-plugin.zip ]; then
+            echo "Error: ZIP file was not created successfully"
+            exit 1
+          fi
+          
+          echo "ZIP contents:"
+          unzip -l build/my-plugin.zip
+          
+          # Verify key files exist in the ZIP
+          echo "Verifying key files..."
+          if ! unzip -l build/my-plugin.zip | grep -q "plugin-main-file.php"; then
+            echo "Error: Main plugin file not found in ZIP"
+            exit 1
+          fi
+
+      # Step 10: Download Freemius PHP SDK
+      - name: Download Freemius PHP SDK
+        run: |
+          curl -L https://github.com/Freemius/php-sdk/archive/refs/heads/master.zip -o freemius-sdk.zip
+          unzip freemius-sdk.zip
+          mv php-sdk-master php-sdk
+
+      # Step 11: Deploy to Freemius
+      - name: Deploy to Freemius
+        timeout-minutes: 5
+        env:
+          FREEMIUS_DEV_ID: ${{ secrets.FREEMIUS_DEV_ID }}
+          FREEMIUS_PUBLIC_KEY: ${{ secrets.FREEMIUS_PUBLIC_KEY }}
+          FREEMIUS_SECRET_KEY: ${{ secrets.FREEMIUS_SECRET_KEY }}
+          FREEMIUS_PLUGIN_ID: ${{ secrets.FREEMIUS_PLUGIN_ID }}
+        run: |
+          php -r "
+          require_once 'php-sdk/FreemiusBase.php';
+          require_once 'php-sdk/Freemius.php';
+          
+          define('FS__API_SCOPE', 'developer');
+          define('FS__API_DEV_ID', getenv('FREEMIUS_DEV_ID'));
+          define('FS__API_PUBLIC_KEY', getenv('FREEMIUS_PUBLIC_KEY'));
+          define('FS__API_SECRET_KEY', getenv('FREEMIUS_SECRET_KEY'));
+          
+          try {
+              // Init SDK
+              \$api = new Freemius_Api(FS__API_SCOPE, FS__API_DEV_ID, FS__API_PUBLIC_KEY, FS__API_SECRET_KEY);
+          
+              // Get version from release tag or workflow dispatch input
+              \$version = trim(getenv('GITHUB_EVENT_NAME') === 'release' 
+                  ? getenv('GITHUB_REF_NAME')
+                  : getenv('INPUT_VERSION'), 'v');
+          
+              echo \"Deploying version: \$version\\n\";
+          
+              // Deploy new version
+              \$plugin_id = getenv('FREEMIUS_PLUGIN_ID');
+              \$result = \$api->Api(\"plugins/\$plugin_id/tags.json\", 'POST', 
+                  array(
+                      'add_contributor' => true,
+                      'version' => \$version,
+                  ), 
+                  array(
+                      'file' => realpath('build/my-plugin.zip')
+                  )
+              );
+          
+              if (!empty(\$result->error)) {
+                  throw new Exception('Freemius API Error: ' . \$result->error->message);
+              }
+          
+              // Verify deployment status
+              \$deployment_status = \$api->Api(\"plugins/\$plugin_id/tags/\$version.json\", 'GET');
+              if (empty(\$deployment_status) || !empty(\$deployment_status->error)) {
+                  throw new Exception('Failed to verify deployment status');
+              }
+          
+              echo \"Successfully deployed version \$version to Freemius\\n\";
+              echo 'Deployment details:\\n';
+              print_r(\$result);
+          
+          } catch (Exception \$e) {
+              echo \"Error: \" . \$e->getMessage() . \"\\n\";
+              exit(1);
+          }
+          "
+
+      # Step 12: Create Release Comment
+      - name: Create Release Comment
+        if: success() && github.event_name == 'release'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const release_id = context.payload.release.id;
+            
+            await github.rest.repos.updateRelease({
+              owner,
+              repo,
+              release_id,
+              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius'
+            });
