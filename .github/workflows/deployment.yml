@@ -2,7 +2,7 @@ name: Build and Deploy to Freemius
 
 on:
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
     inputs:
       version:
@@ -17,6 +17,10 @@ on:
         options:
           - production
           - staging
+
+permissions:
+  contents: read
+  releases: write
 
 env:
   PHP_VERSION: '8.0'
@@ -33,6 +37,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'production' }}
     timeout-minutes: 15
+
+    permissions:
+      contents: read
+      releases: write
 
     steps:
       # Step 1: Validate Freemius Credentials
@@ -206,6 +214,7 @@ jobs:
         if: success() && github.event_name == 'release'
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const release_id = context.payload.release.id;
