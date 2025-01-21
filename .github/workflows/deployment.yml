@@ -236,5 +236,5 @@ jobs:
               owner,
               repo,
               release_id,
-              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius\n\n📥 Download ZIP: ' + downloadUrl
+              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius\n\n[📥 Download Plugin ZIP File](' + downloadUrl + ')'
             });
