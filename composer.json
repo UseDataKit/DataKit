@@ -44,7 +44,6 @@
 		}
 	},
 	"require-dev": {
-		"gravityforms/gravityforms": "dev-master",
 		"phpunit/phpunit": "~8.5",
 		"szepeviktor/phpstan-wordpress": "^1.3",
 		"wp-coding-standards/wpcs": "^3.1",
