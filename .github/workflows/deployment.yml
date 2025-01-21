@@ -145,7 +145,6 @@ jobs:
         run: |
           curl -L https://github.com/Freemius/php-sdk/archive/refs/heads/master.zip -o freemius-sdk.zip
           unzip freemius-sdk.zip
-          mv freemius-php-sdk-master php-sdk
 
       # Step 11: Deploy to Freemius
       - name: Deploy to Freemius
@@ -157,8 +156,8 @@ jobs:
           FREEMIUS_PLUGIN_ID: ${{ secrets.FREEMIUS_PLUGIN_ID }}
         run: |
           php -r "
-          require_once 'php-sdk/FreemiusBase.php';
-          require_once 'php-sdk/Freemius.php';
+          require_once 'freemius-php-sdk-master/freemius/FreemiusBase.php';
+          require_once 'freemius-php-sdk-master/freemius/Freemius.php';
           
           define('FS__API_SCOPE', 'developer');
           define('FS__API_DEV_ID', getenv('FREEMIUS_DEV_ID'));
