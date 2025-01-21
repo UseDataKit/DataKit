@@ -94,21 +94,23 @@ jobs:
         run: |
           # Create a clean export using git archive
           mkdir -p build
-          git archive HEAD --format=zip -o build/my-plugin.zip
+          git archive HEAD --format=zip -o build/datakit.zip
 
       # Step 9: Validate ZIP
       - name: Validate ZIP
         run: |
-          if [ ! -f build/my-plugin.zip ]; then
+          if [ ! -f build/datakit.zip ]; then
             echo "Error: ZIP file was not created successfully"
             exit 1
           fi
           
           echo "ZIP contents:"
-          unzip -l build/my-plugin.zip
+          unzip -l build/datakit.zip
           
           # Verify key files exist in the ZIP
-          echo "Verifying key files..."
+          echo "Verifying key files and directories..."
+          
+          # Check main plugin file
           if ! unzip -l build/datakit.zip | grep -q "datakit.php"; then
             echo "Error: Main plugin file not found in ZIP"
             exit 1
@@ -158,7 +160,7 @@ jobs:
                       'version' => \$version,
                   ), 
                   array(
-                      'file' => realpath('build/my-plugin.zip')
+                      'file' => realpath('build/datakit.zip')
                   )
               );
           
