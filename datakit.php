@@ -19,7 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die;
 }
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once plugin_dir_path( __FILE__ ) . 'freemius.php';
+require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
 const DATAKIT_PLUGIN_FILE = __FILE__;
 const DATAKIT_VERSION     = '1.0.0';
