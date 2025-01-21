@@ -201,7 +201,14 @@ jobs:
                   throw new Exception('Freemius API Error: ' . \$result->error->message);
               }
           
+              # Generate download URL for GitHub release
+              \$free_version_download_url = \$api->GetSignedUrl(\"/plugins/{\$result->plugin_id}/tags/{\$result->id}.zip?is_premium=false\");
+          
               echo \"Successfully deployed version \$version to Freemius\\n\";
+              echo \"Download URL: \$free_version_download_url\\n\";
+          
+              file_put_contents('download_url.txt', \$free_version_download_url);
+          
               echo 'Deployment details:\\n';
               print_r(\$result);
           
@@ -218,12 +225,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const fs = require('fs');
             const { owner, repo } = context.repo;
             const release_id = context.payload.release.id;
+            
+            // Read the download URL from the file
+            const downloadUrl = fs.readFileSync('download_url.txt', 'utf8').trim();
             
             await github.rest.repos.updateRelease({
               owner,
               repo,
               release_id,
-              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius'
+              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius\n\n📥 Download ZIP: ' + downloadUrl
             });
