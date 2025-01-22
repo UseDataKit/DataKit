@@ -22,6 +22,7 @@ permissions:
   contents: write
   actions: write
   pull-requests: write
+  id-token: write
 
 env:
   PHP_VERSION: '8.1'
@@ -43,6 +44,7 @@ jobs:
       contents: write
       actions: write
       pull-requests: write
+      id-token: write
 
     steps:
       # Step 1: Validate Freemius Credentials
