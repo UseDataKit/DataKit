@@ -46,6 +46,9 @@ jobs:
       pull-requests: write
       id-token: write
 
+    outputs:
+      plugin_version: ${{ steps.version.outputs.version }}
+
     steps:
       - name: Validate Freemius Credentials
         id: credentials
@@ -71,7 +74,11 @@ jobs:
           tools: composer:v2
           coverage: none
 
-      # Step 5: Cache Composer dependencies
+      - name: Setup Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
@@ -107,6 +114,8 @@ jobs:
             echo "::error::Failed to create ZIP file"
             exit 1
           fi
+          
+          echo "zip_path=$(realpath build/datakit.zip)" >> $GITHUB_OUTPUT
 
       - name: Validate ZIP
         id: validate
@@ -218,7 +227,60 @@ jobs:
           }
           "
 
-      # Step 12: Create Release Comment
+      - name: Upload Release Assets
+        if: github.event_name == 'release' && !github.event.release.prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        timeout-minutes: 2
+        run: |
+          # Upload to current release
+          if ! gh release upload ${{ github.ref_name }} build/datakit.zip --clobber; then
+            echo "::error::Failed to upload to current release"
+            exit 1
+          fi
+
+          # Only update latest if this is marked as the latest release
+          if [ "${{ github.event.release.draft }}" != "true" ] && [ "${{ github.event.release.prerelease }}" != "true" ]; then
+            echo "This is a full release - updating latest tag"
+          
+            # Create or update latest release with retries
+            max_attempts=3
+            attempt=1
+            while [ $attempt -le $max_attempts ]; do
+              if gh release view latest > /dev/null 2>&1; then
+                if gh release upload latest build/datakit.zip --clobber; then
+                  break
+                fi
+              else
+                if gh release create latest build/datakit.zip --notes "Latest stable release"; then
+                  break
+                fi
+              fi
+          
+              echo "Attempt $attempt failed, retrying..."
+              attempt=$((attempt + 1))
+              sleep 5
+            done
+          
+            if [ $attempt -gt $max_attempts ]; then
+              echo "::error::Failed to update latest release after $max_attempts attempts"
+              exit 1
+            fi
+          
+            # Update the latest tag
+            if ! git tag -f latest ${{ github.ref_name }}; then
+              echo "::error::Failed to create latest tag"
+              exit 1
+            fi
+          
+            if ! git push --force origin latest; then
+              echo "::error::Failed to push latest tag"
+              exit 1
+            fi
+          else
+            echo "This is a draft/pre-release - not updating latest tag"
+          fi
+
       - name: Create Release Comment
         if: success() && github.event_name == 'release'
         uses: actions/github-script@v6
@@ -239,9 +301,18 @@ jobs:
                 downloadUrl = 'Download URL not available';
             }
             
+            const versionedUrl = `https://github.com/${owner}/${repo}/releases/download/${process.env.GITHUB_REF_NAME}/datakit.zip`;
+            const latestUrl = `https://github.com/${owner}/${repo}/releases/download/latest/datakit.zip`;
+            
             await github.rest.repos.updateRelease({
               owner,
               repo,
               release_id,
-              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius\n\n[📥 Download Plugin ZIP File](' + downloadUrl + ')'
+              body: context.payload.release.body + '\n\n✅ Successfully deployed to Freemius\n\n' +
+                    '[📥 Download from Freemius](' + downloadUrl + ')\n\n' +
+                    '[📦 Download Build](' + versionedUrl + ')\n\n' +
+                    '_Stable URL:_\n' +
+                    '```\n' +
+                    latestUrl + '\n' +
+                    '```'
             });
