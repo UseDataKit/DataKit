@@ -58,7 +58,7 @@ jobs:
 
       # Step 2: Checkout code
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -68,12 +68,12 @@ jobs:
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: zip, curl, mbstring
-          tools: composer
+          tools: composer:v2
           coverage: none
 
       # Step 5: Cache Composer dependencies
       - name: Cache Composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
