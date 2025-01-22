@@ -29,7 +29,7 @@ env:
   COMPOSER_CACHE_DIR: ~/.composer/cache
 
 concurrency:
-  group: freemius-deploy-${{ github.ref }}
+  group: freemius-deploy-${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.environment }}
   cancel-in-progress: true
 
 jobs:
