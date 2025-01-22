@@ -47,24 +47,22 @@ jobs:
       id-token: write
 
     steps:
-      # Step 1: Validate Freemius Credentials
       - name: Validate Freemius Credentials
+        id: credentials
         run: |
           if [ -z "${{ secrets.FREEMIUS_DEV_ID }}" ] || \
              [ -z "${{ secrets.FREEMIUS_PUBLIC_KEY }}" ] || \
              [ -z "${{ secrets.FREEMIUS_SECRET_KEY }}" ] || \
              [ -z "${{ secrets.FREEMIUS_PLUGIN_ID }}" ]; then
-            echo "Error: Missing required Freemius credentials"
+            echo "::error::Missing required Freemius credentials"
             exit 1
           fi
 
-      # Step 2: Checkout code
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Step 4: Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -81,7 +79,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      # Step 6: Check for Composer Dependencies
       - name: Check for Composer
         id: check_composer
         run: |
@@ -89,77 +86,80 @@ jobs:
             echo "has_composer=true" >> $GITHUB_OUTPUT
           fi
 
-      # Step 7: Validate composer.json
       - name: Validate composer.json
         if: steps.check_composer.outputs.has_composer == 'true'
         run: composer validate --strict
 
-      # Step 8: Install Dependencies
       - name: Install Dependencies
         if: steps.check_composer.outputs.has_composer == 'true'
         run: |
           composer install --no-dev --optimize-autoloader
           composer dump-autoload --optimize --no-dev
 
-      # Step 8: Build the ZIP File
       - name: Build Plugin ZIP
+        id: build
+        timeout-minutes: 5
         run: |
-          # Create a clean export using git archive
           mkdir -p build
           git archive HEAD --format=zip -o build/datakit.zip
-
-      # Step 9: Validate ZIP
-      - name: Validate ZIP
-        run: |
+          
           if [ ! -f build/datakit.zip ]; then
-            echo "Error: ZIP file was not created successfully"
-            exit 1
-          fi
-          
-          echo "ZIP contents:"
-          unzip -l build/datakit.zip
-          
-          # Verify key files exist in the ZIP
-          echo "Verifying key files and directories..."
-          
-          # Check main plugin file
-          if ! unzip -l build/datakit.zip | grep -q "datakit.php"; then
-            echo "Error: Main plugin file not found in ZIP"
-            exit 1
-          fi
-          
-          # Check src directory exists and has contents
-          if ! unzip -l build/datakit.zip | grep -q "^.*src/"; then
-            echo "Error: src directory not found in ZIP"
-            exit 1
-          fi
-          
-          # Check src directory has contents (should show more than just the directory entry)
-          if [ $(unzip -l build/datakit.zip | grep "src/" | wc -l) -le 1 ]; then
-            echo "Error: src directory is empty"
-            exit 1
-          fi
-          
-          # Check Freemius directory exists and has contents
-          if ! unzip -l build/datakit.zip | grep -q "^.*freemius/"; then
-            echo "Error: freemius directory not found in ZIP"
-            exit 1
-          fi
-          
-          # Check Freemius directory has contents (should show more than just the directory entry)
-          if [ $(unzip -l build/datakit.zip | grep "freemius/" | wc -l) -le 1 ]; then
-            echo "Error: Freemius directory is empty"
+            echo "::error::Failed to create ZIP file"
             exit 1
           fi
 
-      # Step 10: Download Freemius PHP SDK
-      - name: Download Freemius PHP SDK
+      - name: Validate ZIP
+        id: validate
+        timeout-minutes: 2
         run: |
-          curl -L https://github.com/Freemius/php-sdk/archive/refs/heads/master.zip -o freemius-sdk.zip
-          unzip freemius-sdk.zip
+          echo "Verifying ZIP contents..."
+          
+          if ! unzip -l build/datakit.zip > zip_contents.txt; then
+            echo "::error::Failed to read ZIP contents"
+            exit 1
+          fi
+          
+          missing_files=()
+          
+          if ! grep -q "datakit.php" zip_contents.txt; then
+            missing_files+=("Main plugin file (datakit.php)")
+          fi
+          
+          if ! grep -q "^.*src/" zip_contents.txt; then
+            missing_files+=("src directory")
+          elif [ $(grep "src/" zip_contents.txt | wc -l) -le 1 ]; then
+            echo "::warning::src directory appears to be empty"
+          fi
+          
+          if ! grep -q "^.*freemius/" zip_contents.txt; then
+            missing_files+=("freemius directory")
+          elif [ $(grep "freemius/" zip_contents.txt | wc -l) -le 1 ]; then
+            echo "::warning::freemius directory appears to be empty"
+          fi
+          
+          if [ ${#missing_files[@]} -ne 0 ]; then
+            echo "::error::Missing required files/directories:"
+            printf '%s\n' "${missing_files[@]}"
+            exit 1
+          fi
+          
+          echo "ZIP validation successful"
 
-      # Step 11: Deploy to Freemius
+      - name: Download Freemius PHP SDK
+        timeout-minutes: 2
+        run: |
+          if ! curl -L https://github.com/Freemius/php-sdk/archive/refs/heads/master.zip -o freemius-sdk.zip; then
+            echo "::error::Failed to download Freemius SDK"
+            exit 1
+          fi
+          
+          if ! unzip freemius-sdk.zip; then
+            echo "::error::Failed to extract Freemius SDK"
+            exit 1
+          fi
+
       - name: Deploy to Freemius
+        id: deploy
         timeout-minutes: 5
         env:
           FREEMIUS_DEV_ID: ${{ secrets.FREEMIUS_DEV_ID }}
@@ -178,17 +178,14 @@ jobs:
           \$plugin_id = getenv('FREEMIUS_PLUGIN_ID');
           
           try {
-              // Init SDK
               \$api = new Freemius_Api(FS__API_SCOPE, FS__API_DEV_ID, FS__API_PUBLIC_KEY, FS__API_SECRET_KEY);
           
-              // Get version from release tag or workflow dispatch input
               \$version = trim(getenv('GITHUB_EVENT_NAME') === 'release' 
                   ? getenv('GITHUB_REF_NAME')
                   : getenv('INPUT_VERSION'), 'v');
           
               echo \"Deploying version: \$version\\n\";
           
-              // Deploy new version
               \$result = \$api->Api(\"plugins/\$plugin_id/tags.json\", 'POST', 
                   array(
                       'add_contributor' => true,
@@ -203,19 +200,20 @@ jobs:
                   throw new Exception('Freemius API Error: ' . \$result->error->message);
               }
           
-              # Generate download URL for GitHub release
               \$free_version_download_url = \$api->GetSignedUrl(\"/plugins/{\$result->plugin_id}/tags/{\$result->id}.zip?is_premium=false\");
           
               echo \"Successfully deployed version \$version to Freemius\\n\";
               echo \"Download URL: \$free_version_download_url\\n\";
           
-              file_put_contents('download_url.txt', \$free_version_download_url);
+              if (!file_put_contents('download_url.txt', \$free_version_download_url)) {
+                  throw new Exception('Failed to save download URL');
+              }
           
               echo 'Deployment details:\\n';
               print_r(\$result);
           
           } catch (Exception \$e) {
-              echo \"Error: \" . \$e->getMessage() . \"\\n\";
+              echo \"::error::{$e->getMessage()}\\n\";
               exit(1);
           }
           "
@@ -224,6 +222,7 @@ jobs:
       - name: Create Release Comment
         if: success() && github.event_name == 'release'
         uses: actions/github-script@v6
+        timeout-minutes: 1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -231,8 +230,14 @@ jobs:
             const { owner, repo } = context.repo;
             const release_id = context.payload.release.id;
             
-            // Read the download URL from the file
-            const downloadUrl = fs.readFileSync('download_url.txt', 'utf8').trim();
+            let downloadUrl;
+            try {
+                downloadUrl = fs.readFileSync('download_url.txt', 'utf8').trim();
+                if (!downloadUrl) throw new Error('Empty download URL');
+            } catch (error) {
+                console.error('Failed to read download URL:', error);
+                downloadUrl = 'Download URL not available';
+            }
             
             await github.rest.repos.updateRelease({
               owner,
