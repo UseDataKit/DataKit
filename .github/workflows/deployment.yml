@@ -24,7 +24,7 @@ permissions:
   pull-requests: write
 
 env:
-  PHP_VERSION: '8.0'
+  PHP_VERSION: '8.1'
   COMPOSER_NO_INTERACTION: '1'
   COMPOSER_CACHE_DIR: ~/.composer/cache
 
