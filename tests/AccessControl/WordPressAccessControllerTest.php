@@ -36,11 +36,11 @@ final class WordPressAccessControllerTest extends TestCase {
 		self::assertFalse( $guest_controller->can( new EditDataView( $dataview ) ) );
 		self::assertFalse( $guest_controller->can( new DeleteDataView( $dataview ) ) );
 
-        self::assertTrue( $user_controller->can( new ViewDataView( $dataview ) ) );
-        self::assertFalse( $user_controller->can( new EditDataView( $dataview ) ) );
-        self::assertFalse( $user_controller->can( new DeleteDataView( $dataview ) ) );
+		self::assertTrue( $user_controller->can( new ViewDataView( $dataview ) ) );
+		self::assertFalse( $user_controller->can( new EditDataView( $dataview ) ) );
+		self::assertFalse( $user_controller->can( new DeleteDataView( $dataview ) ) );
 
-        self::assertTrue( $admin_controller->can( new ViewDataView( $dataview ) ) );
+		self::assertTrue( $admin_controller->can( new ViewDataView( $dataview ) ) );
 		self::assertTrue( $admin_controller->can( new EditDataView( $dataview ) ) );
 		self::assertTrue( $admin_controller->can( new DeleteDataView( $dataview ) ) );
 	}
