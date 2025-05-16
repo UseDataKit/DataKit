@@ -51,7 +51,7 @@ final class WordPressAccessController implements AccessController {
 	public function can( Capability $capability ): bool {
 		$can = $this->previous->can( $capability );
 
-		if ( $this->user && $this->user->exists() ) {
+		if ( !$can && $this->user && $this->user->exists() ) {
 			$can = $this->user->has_cap( 'administrator' );
 		}
 
