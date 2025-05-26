@@ -24,17 +24,24 @@ final class WordPressAccessControllerTest extends TestCase {
 	 */
 	public function test_can(): void {
 		$dataview = DataView::table( 'test', new ArrayDataSource( 'test', [] ), [] );
-		$user     = new WP_User( (object) [ 'ID' => 1 ], 'admin' );
-		$user->add_cap( 'administrator' );
+		$admin     = new WP_User( (object) [ 'ID' => 1 ], 'admin' );
+		$user      = new WP_User( (object) [ 'ID' => 2 ], 'user' );
+		$admin->add_cap( 'administrator' );
 
-		$guest = new WordPressAccessController( null );
-		$admin = new WordPressAccessController( $user );
+		$guest_controller = new WordPressAccessController( null );
+		$admin_controller = new WordPressAccessController( $admin );
+		$user_controller  = new WordPressAccessController( $user );
 
-		self::assertTrue( $guest->can( new ViewDataView( $dataview ) ) );
-		self::assertFalse( $guest->can( new EditDataView( $dataview ) ) );
-		self::assertFalse( $guest->can( new DeleteDataView( $dataview ) ) );
+		self::assertTrue( $guest_controller->can( new ViewDataView( $dataview ) ) );
+		self::assertFalse( $guest_controller->can( new EditDataView( $dataview ) ) );
+		self::assertFalse( $guest_controller->can( new DeleteDataView( $dataview ) ) );
 
-		self::assertTrue( $admin->can( new EditDataView( $dataview ) ) );
-		self::assertTrue( $admin->can( new DeleteDataView( $dataview ) ) );
+		self::assertTrue( $user_controller->can( new ViewDataView( $dataview ) ) );
+		self::assertFalse( $user_controller->can( new EditDataView( $dataview ) ) );
+		self::assertFalse( $user_controller->can( new DeleteDataView( $dataview ) ) );
+
+		self::assertTrue( $admin_controller->can( new ViewDataView( $dataview ) ) );
+		self::assertTrue( $admin_controller->can( new EditDataView( $dataview ) ) );
+		self::assertTrue( $admin_controller->can( new DeleteDataView( $dataview ) ) );
 	}
 }
